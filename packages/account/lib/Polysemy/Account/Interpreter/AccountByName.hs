@@ -1,8 +1,6 @@
 module Polysemy.Account.Interpreter.AccountByName where
 
-import Conc (interpretAtomic)
-import Polysemy.Db (PureStore (PureStore), Query, Store, interpretStoreAtomicState)
-import Polysemy.Db.Query (interpretQueryAtomicStateOne)
+import Polysemy.Db (DbError, PureStore, Query, Store, interpretQueryStoreConc)
 import Sqel (Uid (Uid))
 
 import Polysemy.Account.Data.Account (Account (Account))
@@ -11,24 +9,24 @@ import Polysemy.Account.Data.AccountByName (AccountByName (AccountByName))
 match ::
   AccountByName ->
   Uid i (Account p) ->
-  Bool
-match (AccountByName name) (Uid _ (Account accountName _ _)) =
-  name == accountName
+  Maybe (Uid i (Account p))
+match (AccountByName name) a@(Uid _ (Account accountName _ _))
+  | name == accountName = Just a
+  | otherwise = Nothing
 
 type AccountQuery i p =
   [
-    Query AccountByName (Maybe (Uid i (Account p))) !! (),
-    Store i (Account p) !! (),
-    AtomicState (PureStore (Uid i (Account p)))
+    Query AccountByName (Maybe (Uid i (Account p))) !! DbError,
+    Store i (Account p) !! DbError,
+    AtomicState (PureStore i (Account p))
   ]
 
 interpretAccountByNameState ::
   ∀ i p r .
-  Eq i =>
+  Ord i =>
+  Show i =>
   Member (Embed IO) r =>
   [Uid i (Account p)] ->
   InterpretersFor (AccountQuery i p) r
 interpretAccountByNameState initial =
-  interpretAtomic (PureStore initial) .
-  interpretStoreAtomicState .
-  interpretQueryAtomicStateOne match
+  interpretQueryStoreConc match initial

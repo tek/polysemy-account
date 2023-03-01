@@ -4,7 +4,7 @@ import qualified Data.CaseInsensitive as CaseInsensitive
 import Exon.Quote (exon)
 import Network.Wai (Request, requestHeaders, requestMethod)
 import Network.Wai.Test (SRequest (SRequest), SResponse, Session, defaultRequest, runSession, setPath, srequest)
-import Polysemy.Db.Interpreter.Id (interpretIdNum)
+import Polysemy.Db.Interpreter.Id (interpretIdNumFrom)
 import Polysemy.Test (TestError (TestError), UnitTest)
 import Prelude hiding (get, put)
 import Servant (
@@ -37,7 +37,7 @@ import Polysemy.Account.Data.AccountsError (AccountsError)
 import Polysemy.Account.Data.AuthToken (AuthToken (AuthToken))
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (AuthedAccount))
 import Polysemy.Account.Data.Privilege (Privilege (Admin, Web))
-import Polysemy.Account.Data.RawPassword (RawPassword, rawPassword)
+import Polysemy.Account.Data.RawPassword (rawPassword)
 import qualified Polysemy.Account.Effect.Accounts as Accounts
 import Polysemy.Account.Effect.Accounts (Accounts)
 import Polysemy.Account.Interpreter.Accounts (interpretAccountsState)
@@ -182,7 +182,7 @@ interpretAccounts ::
   InterpreterFor (Accounts Int [Privilege] !! AccountsError) r
 interpretAccounts accounts auths =
   mapError TestError .
-  interpretIdNum @Int .
+  interpretIdNumFrom 3 .
   interpretAccountsState False accounts auths .
   raiseUnder2
 

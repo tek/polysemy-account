@@ -1,9 +1,6 @@
 module Polysemy.Account.Interpreter.AuthForAccount where
 
-import Conc (interpretAtomic)
-import Polysemy.Db (PureStore (PureStore), Query, Store)
-import Polysemy.Db.Query (interpretQueryAtomicStateMulti)
-import Polysemy.Db.Store (interpretStoreAtomicState)
+import Polysemy.Db (DbError, PureStore, Query, Store, interpretQueryStoreConc)
 import Sqel (Uid (Uid))
 
 import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
@@ -13,24 +10,24 @@ match ::
   Eq i =>
   AuthForAccount i ->
   Uid i (AccountAuth i) ->
-  Bool
-match (AuthForAccount queryId) (Uid _ (AccountAuth accountId _ _ _)) =
-  queryId == accountId
+  Maybe (Uid i (AccountAuth i))
+match (AuthForAccount queryId) a@(Uid _ (AccountAuth accountId _ _ _))
+  | queryId == accountId = Just a
+  | otherwise = Nothing
 
 type AuthQuery i p =
   [
-    Query (AuthForAccount i) [Uid i (AccountAuth i)] !! (),
-    Store i (AccountAuth i) !! (),
-    AtomicState (PureStore (Uid i (AccountAuth i)))
+    Query (AuthForAccount i) [Uid i (AccountAuth i)] !! DbError,
+    Store i (AccountAuth i) !! DbError,
+    AtomicState (PureStore i (AccountAuth i))
   ]
 
 interpretAuthForAccountState ::
   ∀ i r p .
-  Eq i =>
+  Ord i =>
+  Show i =>
   Member (Embed IO) r =>
   [Uid i (AccountAuth i)] ->
   InterpretersFor (AuthQuery i p) r
 interpretAuthForAccountState initial =
-  interpretAtomic (PureStore initial) .
-  interpretStoreAtomicState .
-  interpretQueryAtomicStateMulti match
+  interpretQueryStoreConc match initial

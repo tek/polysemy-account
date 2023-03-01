@@ -6,7 +6,7 @@ import Polysemy.Db (Query)
 import Polysemy.Db.Data.DbError (DbError)
 import qualified Polysemy.Db.Effect.Store as Store
 import Polysemy.Db.Effect.Store (QStore)
-import Polysemy.Hasql.Interpreter.DbTable (interpretDbTable)
+import Polysemy.Hasql (interpretTable)
 import Polysemy.Hasql.Interpreter.Store (interpretStoreDb)
 import Polysemy.Hasql.Test.Run (integrationTest)
 import Polysemy.Test (UnitTest, assertEq)
@@ -22,7 +22,7 @@ import Polysemy.Account.Db.Interpreter.AuthForAccount (interpretQueryAuthForAcco
 test_authForAccount :: UnitTest
 test_authForAccount =
   integrationTest "polysemy_account_db" "polysemy-account" $
-  interpretDbTable ts $
+  interpretTable ts $
   interpretStoreDb ts (checkQuery (primAs @"id") Dd.accountAuth) $
   interpretQueryAuthForAccountDb do
     restop @DbError @(QStore _ _ _) $ restop @DbError @(Query _ _) do

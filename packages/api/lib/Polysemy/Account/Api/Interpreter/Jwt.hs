@@ -7,8 +7,7 @@ import Crypto.JOSE (JWK, KeyMaterialGenParam (OKPGenParam), OKPCrv (Ed25519), ge
 import Polysemy.Conc.AtomicState (interpretAtomic)
 import Polysemy.Db.Data.DbError (DbError)
 import Polysemy.Db.Data.InitDbError (InitDbError)
-import Polysemy.Hasql (Database, interpretAtomicStateDb)
-import Polysemy.Hasql.Interpreter.DbTable (interpretDbTable)
+import Polysemy.Hasql (Database, interpretAtomicStateDb, interpretTable)
 import Servant.Auth.JWT (ToJWT)
 import Servant.Auth.Server (FromJWT, JWTSettings, defaultJWTSettings, makeJWT)
 import Sqel (tableName)
@@ -119,7 +118,7 @@ interpretJwtDb ::
   InterpreterFor (Jwt a !! DbError) r
 interpretJwtDb =
   interpretGenJwk .
-  interpretDbTable ts .
+  interpretTable ts .
   interpretAtomicStateDb ts genJwk .
   interpretJwtPersistent .
   insertAt @1

@@ -241,6 +241,7 @@ interpretAccounts initActive defaultPerms =
 interpretAccountsPasswordStateWith ::
   ∀ i p r .
   Ord i =>
+  Show i =>
   Members [Log, Id i, Embed IO] r =>
   Bool ->
   p ->
@@ -251,12 +252,13 @@ interpretAccountsPasswordStateWith initActive defaultPerms accounts auths =
   interpretPasswordId .
   interpretAccountByNameState accounts .
   interpretAuthForAccountState auths .
-  interpretAccounts @() initActive defaultPerms .
+  interpretAccounts initActive defaultPerms .
   insertAt @1
 
 interpretAccountsPasswordState ::
   ∀ i r .
   Ord i =>
+  Show i =>
   Members [Log, Id i, Embed IO] r =>
   Bool ->
   [Uid i (Account [Privilege])] ->
@@ -268,6 +270,7 @@ interpretAccountsPasswordState initActive =
 interpretAccountsStateWith ::
   ∀ i p r .
   Ord i =>
+  Show i =>
   Members [Log, Id i, Embed IO] r =>
   Bool ->
   p ->
@@ -280,6 +283,7 @@ interpretAccountsStateWith initActive defaultPerms accounts auths =
 interpretAccountsState ::
   ∀ i r .
   Ord i =>
+  Show i =>
   Members [Log, Id i, Embed IO] r =>
   Bool ->
   [Uid i (Account [Privilege])] ->

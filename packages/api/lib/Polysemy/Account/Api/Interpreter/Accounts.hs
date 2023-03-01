@@ -5,11 +5,11 @@ import Polysemy.Db.Data.DbError (DbError)
 import Polysemy.Db.Data.InitDbError (InitDbError)
 import Polysemy.Db.Effect.Store (Store)
 import Polysemy.Db.Interpreter.Id (interpretIdUuidIO)
+import Polysemy.Hasql (interpretTable)
 import Polysemy.Hasql.Effect.Database (Database)
 import Polysemy.Hasql.Effect.DbTable (StoreTable)
-import Polysemy.Hasql.Interpreter.DbTable (interpretDbTable)
-import Polysemy.Hasql.Interpreter.Store (interpretStoreDb, primIdQuery)
-import Sqel (Dd, FullCodec)
+import Polysemy.Hasql.Interpreter.Store (interpretStoreDb)
+import Sqel (CheckedProjection, Dd, FullCodec, primIdQuery)
 import Sqel.Codec (PrimColumn)
 import Sqel.Ext (Column, ReifyCodec, ReifyDd)
 import Sqel.Query (checkQuery)
@@ -18,6 +18,7 @@ import Polysemy.Account.Data.Account (Account)
 import Polysemy.Account.Data.AccountAuth (AccountAuth)
 import Polysemy.Account.Data.AccountsError (AccountsError)
 import qualified Polysemy.Account.Db.Dd as Dd
+import Polysemy.Account.Db.Dd (DdAccount)
 import Polysemy.Account.Db.Interpreter.AccountByName (interpretQueryAccountByNameDb)
 import Polysemy.Account.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)
 import Polysemy.Account.Effect.Accounts (Accounts)
@@ -35,7 +36,7 @@ interpretAccountDb ::
   Members [Database !! DbError, Log, Embed IO] r =>
   InterpreterFor (StoreTable i (Account p) !! DbError) r
 interpretAccountDb priv =
-  interpretDbTable (Dd.accountSchema priv)
+  interpretTable (Dd.accountSchema priv)
 
 interpretAccountAuthDb ::
   ∀ i r .
@@ -43,7 +44,7 @@ interpretAccountAuthDb ::
   Members [Database !! DbError, Log, Embed IO] r =>
   InterpreterFor (StoreTable i (AccountAuth i) !! DbError) r
 interpretAccountAuthDb =
-  interpretDbTable Dd.accountAuthSchema
+  interpretTable Dd.accountAuthSchema
 
 interpretAccountStore ::
   ∀ i p t dt s r .
@@ -71,6 +72,7 @@ interpretAccountsPasswordDb ::
   Column p "privileges" s s =>
   ReifyCodec FullCodec s p =>
   ReifyDd s =>
+  CheckedProjection (DdAccount UUID p s) (DdAccount UUID p s) =>
   Dd s ->
   Bool ->
   p ->
@@ -92,6 +94,7 @@ interpretAccountsDb ::
   Column p "privileges" s s =>
   ReifyCodec FullCodec s p =>
   ReifyDd s =>
+  CheckedProjection (DdAccount UUID p s) (DdAccount UUID p s) =>
   Dd s ->
   Bool ->
   p ->

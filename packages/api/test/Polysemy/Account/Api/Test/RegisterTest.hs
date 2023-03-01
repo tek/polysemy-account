@@ -58,7 +58,7 @@ test_register =
     (_, rootAuth) <- TestClient.makeAdmin
     SResponse (Status statusCreated _) _ _ <- TestClient.request Post "auth/register" [] registerPayload
     statusCreated === 201
-    SResponse (Status _ _) _ (Aeson.eitherDecode -> decodeResult) <- TestClient.request Get "account/1" [rootAuth] ""
+    SResponse (Status _ _) _ (Aeson.eitherDecode -> decodeResult) <- TestClient.request Get "account/3" [rootAuth] ""
     Uid (accountId :: Int) (account :: Account [Privilege]) <- either (throw . TestError . show) pure decodeResult
     let updated = account & #status .~ AccountStatus.Active
     SResponse (Status _ _) _ _ <- TestClient.request Put [exon|account/#{show accountId}|] [rootAuth] (Aeson.encode updated)

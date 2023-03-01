@@ -2,10 +2,35 @@
 
 module Polysemy.Account.Db.Dd where
 
-import Sqel (Dd, Sqel, Uid, array, enum, nullable, pk, prim, primNewtype, prod, uid, type (:>) ((:>)))
+import Prelude hiding (Mod)
+import Sqel (
+  Dd,
+  EnumColumn,
+  Mod,
+  Mods,
+  Prim,
+  PrimNewtype,
+  PrimaryKey,
+  Prod,
+  Sqel,
+  Uid,
+  UidDd,
+  array,
+  enum,
+  nullable,
+  pk,
+  prim,
+  primNewtype,
+  prod,
+  uid,
+  type (*>),
+  type (:>) ((:>)),
+  type (>),
+  )
 import Sqel.Codec (PrimColumn)
 import Sqel.Comp (Column)
 import Sqel.Data.Codec (FullCodec)
+import Sqel.Data.PgType (PgPrimName)
 import Sqel.Data.TableSchema (TableSchema)
 import Sqel.Ext (named)
 import Sqel.PgType (tableSchema)
@@ -14,11 +39,21 @@ import Sqel.ReifyDd (ReifyDd)
 
 import Polysemy.Account.Data.Account (Account, AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth)
+import Polysemy.Account.Data.AccountName (AccountName)
+import Polysemy.Account.Data.AccountStatus (AccountStatus)
+
+type DdAccount i p s =
+  UidDd (Mod PrimaryKey (Prim "id" i)) (
+    Prod (Account p) *>
+    PrimNewtype "name" AccountName >
+    Mods [PgPrimName, EnumColumn] (Prim "status" AccountStatus) >
+    s
+  )
 
 account ::
   Column p "privileges" s s =>
   Dd s ->
-  Sqel (Uid i (Account p)) _
+  Dd (DdAccount i p s)
 account p =
   uid (pk prim) (prod (primNewtype :> enum :> p))
 
