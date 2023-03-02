@@ -43,6 +43,7 @@ import Polysemy.Account.Data.Account (Account, AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth)
 import Polysemy.Account.Data.AccountName (AccountName)
 import Polysemy.Account.Data.AccountStatus (AccountStatus)
+import Polysemy.Account.Data.Privilege (Privilege)
 
 type DdAccount i p s =
   UidDd (Mod PrimaryKey (Prim "id" i)) (
@@ -51,6 +52,10 @@ type DdAccount i p s =
     Mods [PgPrimName, EnumColumn] (Prim "status" AccountStatus) >
     s
   )
+
+privileges :: Sqel [Privilege] _
+privileges =
+  named @"privileges" (array enum)
 
 account ::
   Column p "privileges" s s =>
@@ -61,7 +66,7 @@ account p =
 
 accountP :: Sqel (Uid i AccountP) _
 accountP =
-  account (named @"privileges" (array enum))
+  account privileges
 
 accountSchema ::
   PrimColumn i =>
