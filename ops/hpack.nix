@@ -85,6 +85,7 @@ in {
       "password ^>=3.0"
       "polysemy-db"
       "random"
+      "servant-auth"
       "sqel"
     ];
   };

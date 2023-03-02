@@ -58,7 +58,7 @@ module Polysemy.Account.Api (
   adminOnly2_,
 ) where
 
-import Polysemy.Account.Api.Data.Authed (Authed, AuthedP)
+import Polysemy.Account.Data.Authed (Authed, AuthedP)
 import Polysemy.Account.Api.Effect.Authorize (Authorize (Authorize), authorize)
 import Polysemy.Account.Api.Effect.Jwt (GenJwk, Jwt, genJwk, key, makeToken, settings)
 import Polysemy.Account.Api.Interpreter.Accounts (

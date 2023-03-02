@@ -22,7 +22,6 @@ extra-source-files:
 library
   exposed-modules:
       Polysemy.Account.Api
-      Polysemy.Account.Api.Data.Authed
       Polysemy.Account.Api.Effect.Authorize
       Polysemy.Account.Api.Effect.Jwt
       Polysemy.Account.Api.Interpreter.Accounts

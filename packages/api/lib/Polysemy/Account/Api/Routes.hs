@@ -4,7 +4,7 @@ module Polysemy.Account.Api.Routes where
 import Servant.API (Capture, Get, JSON, NoContent, PostCreated, PostResetContent, Put, ReqBody, (:<|>), (:>))
 import Sqel (Uid)
 
-import Polysemy.Account.Api.Data.Authed (Authed)
+import Polysemy.Account.Data.Authed (Authed)
 import Polysemy.Account.Data.Account (Account)
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials)
 import Polysemy.Account.Data.AuthToken (AuthToken)

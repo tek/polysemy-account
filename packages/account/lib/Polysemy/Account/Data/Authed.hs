@@ -1,5 +1,5 @@
 -- | Description: Servant API markers for JWT auth with 'AuthedAccount'
-module Polysemy.Account.Api.Data.Authed where
+module Polysemy.Account.Data.Authed where
 
 import Servant.Auth (Auth, JWT)
 

@@ -32,6 +32,7 @@ library
       Polysemy.Account.Data.AccountsConfig
       Polysemy.Account.Data.AccountsError
       Polysemy.Account.Data.AccountStatus
+      Polysemy.Account.Data.Authed
       Polysemy.Account.Data.AuthedAccount
       Polysemy.Account.Data.AuthForAccount
       Polysemy.Account.Data.AuthToken
@@ -124,6 +125,7 @@ library
     , polysemy-plugin
     , prelate >=0.5
     , random
+    , servant-auth
     , sqel
   mixins:
       base hiding (Prelude)
