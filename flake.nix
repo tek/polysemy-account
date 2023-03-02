@@ -5,15 +5,13 @@
     hix.url = "git+https://git.tryp.io/tek/hix";
     hls.url = "github:haskell/haskell-language-server?ref=1.9.0.0";
     polysemy-hasql.url = "git+https://git.tryp.io/tek/polysemy-hasql?ref=sqel";
-    incipit.url = "git+https://git.tryp.io/tek/incipit";
   };
 
-  outputs = { hix, hls, polysemy-hasql, incipit, ...  }:
+  outputs = { hix, hls, polysemy-hasql, ...  }:
   let
 
     all = { hackage, source, ... }: {
       elocrypt = hackage "2.1.0" "0dm2k528bs4zwriyrrqs7j44pmpwpxzivaa6n8iwliwd2sh19s78";
-      zeugma = source.package incipit "zeugma";
     };
 
     vm = {
@@ -47,6 +45,7 @@
     };
     devGhc.compiler = "ghc925";
     hpack.packages = import ./ops/hpack.nix { inherit config lib; };
+    hackage.versionFile = "ops/version.nix";
     ghci = {
       preludePackage = "prelate";
       preludeModule = "Prelate";

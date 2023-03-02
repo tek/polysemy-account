@@ -1,12 +1,9 @@
 module Polysemy.Account.Api.Test.AccountByNameTest where
 
 import qualified Polysemy.Db as Db
-import Polysemy.Db (Query)
-import Polysemy.Db.Data.DbError (DbError)
+import Polysemy.Db (DbError, QStore, Query)
 import qualified Polysemy.Db.Effect.Store as Store
-import Polysemy.Db.Effect.Store (QStore)
-import Polysemy.Hasql (interpretTable)
-import Polysemy.Hasql.Interpreter.Store (interpretStoreDb)
+import Polysemy.Hasql (interpretStoreDb, interpretTable)
 import Polysemy.Hasql.Test.Run (integrationTest)
 import Polysemy.Test (UnitTest, assertJust)
 import Sqel (Uid (Uid), primAs)

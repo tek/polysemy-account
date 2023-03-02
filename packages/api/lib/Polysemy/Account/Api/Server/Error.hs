@@ -1,14 +1,41 @@
+{-# options_haddock prune #-}
+
+-- | Description: Internal error combinators
 module Polysemy.Account.Api.Server.Error where
 
+import qualified Data.Aeson as Aeson
 import Exon.Quote (exon)
 import qualified Polysemy.Log as Log
-import Servant (ServerError, err401, err409, err500)
+import Servant (ServerError, err401, err409, err500, errBody)
 
-import Polysemy.Account.Api.Error (errJson, internal)
 import Polysemy.Account.Data.AccountsError (
   AccountsClientError (Conflict, InvalidAuth, NoAccountId, NoAccountName),
   AccountsError (Client, Internal),
   )
+
+serverErrorLBS :: ServerError -> LByteString -> ServerError
+serverErrorLBS err e =
+  err { errBody = e }
+
+serverError :: ServerError -> Text -> ServerError
+serverError err =
+  serverErrorLBS err . encodeUtf8
+
+unauthorized :: Text -> ServerError
+unauthorized =
+  serverError err401
+
+internal :: Text -> ServerError
+internal =
+  serverError err500
+
+errJson ::
+  ToJSON e =>
+  ServerError ->
+  e ->
+  ServerError
+errJson err =
+  serverErrorLBS err . Aeson.encode
 
 data ClientError =
   ClientError {
@@ -46,7 +73,7 @@ accountsError = \case
   Client NoAccountName ->
     respondError err401 "No such account"
   Client Conflict ->
-    respondError err409 "Account already exists"
+    respondError err409 "Multiple accounts with same name"
   Internal err ->
     internalAccountsError err
 

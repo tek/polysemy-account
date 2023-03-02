@@ -1,12 +1,13 @@
+{-# options_haddock prune #-}
 {-# options_ghc -fno-warn-orphans #-}
 
+-- | Interpreters for 'Jwt'
 module Polysemy.Account.Api.Interpreter.Jwt where
 
 import qualified Crypto.JOSE as JOSE
 import Crypto.JOSE (JWK, KeyMaterialGenParam (OKPGenParam), OKPCrv (Ed25519), genJWK)
 import Polysemy.Conc.AtomicState (interpretAtomic)
-import Polysemy.Db.Data.DbError (DbError)
-import Polysemy.Db.Data.InitDbError (InitDbError)
+import Polysemy.Db (DbError, InitDbError)
 import Polysemy.Hasql (Database, interpretAtomicStateDb, interpretTable)
 import Servant.Auth.JWT (ToJWT)
 import Servant.Auth.Server (FromJWT, JWTSettings, defaultJWTSettings, makeJWT)
@@ -36,6 +37,7 @@ generateAndStoreKey = do
   k <- embed (genJWK (OKPGenParam Ed25519))
   k <$ atomicPut (Just k)
 
+-- | Interpret 'GenJwk' using 'Ed25519'.
 interpretGenJwk ::
   Member (Embed IO) r =>
   InterpreterFor GenJwk r
@@ -64,7 +66,11 @@ authToken = \case
   Left err ->
     throw (show err)
 
--- errors in this interpreter are critical
+-- | Interpret 'Jwt' by storing the key in 'AtomicState', generating it on the fly if absent.
+--
+-- Generates 'Ed25519' keys.
+--
+-- Errors originating from the token generator are critical.
 interpretJwtState ::
   Members [GenJwk, AtomicState (Maybe JWK), Error Text, Embed IO] r =>
   ToJWT a =>
@@ -79,6 +85,7 @@ interpretJwtState =
       sett <- settings
       authToken =<< embed (makeJWT a sett Nothing)
 
+-- | Interpret 'Jwt' by storing the key in 'AtomicState' in memory.
 interpretJwt ::
   ∀ a r .
   Members [Error Text, Embed IO] r =>
@@ -96,6 +103,12 @@ settingsPersistent ::
 settingsPersistent =
   defaultJWTSettings <$> atomicGet
 
+-- | Interpret 'Jwt' by storing the key in 'AtomicState', requiring the key to be present from the start.
+-- This is intended to be used with a database backing the 'AtomicState', the key being generated when starting the app.
+--
+-- Generates 'Ed25519' keys.
+--
+-- Errors originating from the token generator are critical.
 interpretJwtPersistent ::
   ∀ a e r .
   Members [AtomicState JWK !! e, Error Text, Embed IO] r =>
@@ -111,6 +124,8 @@ interpretJwtPersistent =
       sett <- restop settingsPersistent
       authToken =<< embed (makeJWT a sett Nothing)
 
+-- | Interpret 'Jwt' using 'interpretJwtPersistent' and interpret 'AtomicState' as a PostgreSQL table using
+-- @polysemy-hasql@, generating the JWK when it is not found in the database.
 interpretJwtDb ::
   ∀ a r .
   Members [Database !! DbError, Error InitDbError, Error Text, Log, Mask, Resource, Race, Embed IO] r =>

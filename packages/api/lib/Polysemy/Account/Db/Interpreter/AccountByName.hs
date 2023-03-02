@@ -1,11 +1,12 @@
+-- | Description: PostgreSQL interpreters for the query for an account by name
 module Polysemy.Account.Db.Interpreter.AccountByName where
 
 import Data.UUID (UUID)
-import Polysemy.Db.Data.DbError (DbError)
-import Polysemy.Db.Data.InitDbError (InitDbError)
-import Polysemy.Db.Effect.Query (Query (..))
+import Polysemy.Db (DbError)
+import Polysemy.Db (InitDbError)
+import Polysemy.Db.Ext (Query (..))
 import Polysemy.Hasql (interpretQueryDd)
-import Polysemy.Hasql.Effect.DbTable (DbTable)
+import Polysemy.Hasql (DbTable)
 import Sqel (CheckedProjection, Dd, FullCodec, Uuid, primNewtype, prod)
 import Sqel.Ext (Column, ReifyCodec, ReifyDd)
 
@@ -13,6 +14,7 @@ import Polysemy.Account.Data.Account (Account, AccountP)
 import Polysemy.Account.Data.AccountByName (AccountByName)
 import Polysemy.Account.Db.Dd (DdAccount, account, accountP)
 
+-- | Interpret @'Query' 'AccountByName'@ with [Polysemy.Hasql]("Polysemy.Hasql").
 interpretQueryAccountByNameDb ::
   ∀ p s r .
   Column p "privileges" s s =>
@@ -28,6 +30,9 @@ interpretQueryAccountByNameDb p =
     table = account p
     query = prod primNewtype
 
+-- | Interpret @'Query' 'AccountByName'@ with [Polysemy.Hasql]("Polysemy.Hasql").
+--
+-- Convenience specialization for the default privilege type.
 interpretQueryAccountPByNameDb ::
   Members [DbTable (Uuid AccountP) !! DbError, Error InitDbError] r =>
   InterpreterFor (Query AccountByName (Maybe (Uuid AccountP)) !! DbError) r

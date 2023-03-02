@@ -15,6 +15,9 @@ copyright:      2023 Torsten Schmits
 license:        BSD-2-Clause-Patent
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    changelog.md
+    readme.md
 
 library
   exposed-modules:
@@ -26,13 +29,14 @@ library
       Polysemy.Account.Data.AccountByName
       Polysemy.Account.Data.AccountCredentials
       Polysemy.Account.Data.AccountName
-      Polysemy.Account.Data.AccountPassword
+      Polysemy.Account.Data.AccountsConfig
       Polysemy.Account.Data.AccountsError
       Polysemy.Account.Data.AccountStatus
       Polysemy.Account.Data.AuthedAccount
-      Polysemy.Account.Data.AuthenticateError
       Polysemy.Account.Data.AuthForAccount
       Polysemy.Account.Data.AuthToken
+      Polysemy.Account.Data.GeneratedPassword
+      Polysemy.Account.Data.HashedPassword
       Polysemy.Account.Data.Port
       Polysemy.Account.Data.Privilege
       Polysemy.Account.Data.RawPassword
@@ -42,8 +46,6 @@ library
       Polysemy.Account.Interpreter.Accounts
       Polysemy.Account.Interpreter.AuthForAccount
       Polysemy.Account.Interpreter.Password
-      Polysemy.Account.Login
-      Polysemy.Account.Register
   hs-source-dirs:
       lib
   default-extensions:

@@ -1,3 +1,4 @@
+-- | Description: Server runners using 'Jwt' for authentication
 module Polysemy.Account.Api.Native where
 
 import Servant (
@@ -17,12 +18,17 @@ import Polysemy.Account.Api.Effect.Jwt (Jwt)
 import Polysemy.Account.Api.NativeContext (ServerReady, runServer)
 import Polysemy.Account.Data.Port (Port)
 
+-- | The Servant context for 'Jwt' servers.
 type AuthContext =
   [JWTSettings, CookieSettings]
 
+-- | Servant constraint for servers using JWT.
 type ServerAuth api =
   HasServer api AuthContext
 
+-- | Run a Servant server with JSON Web Token authentication using settings from 'Jwt'.
+--
+-- This variant allows supplying additional 'Context's.
 runServerJwtWith ::
   ∀ (api :: Type) (context :: [Type]) a e r .
   HasContextEntry (context .++ DefaultErrorFormatters) ErrorFormatters =>
@@ -38,6 +44,7 @@ runServerJwtWith ctx srv port = do
   where
     context jwtSettings = jwtSettings :. defaultCookieSettings :. ctx
 
+-- | Run a Servant server with JSON Web Token authentication using settings from 'Jwt'.
 runServerJwt ::
   ∀ (api :: Type) a e r .
   ServerAuth api =>

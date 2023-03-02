@@ -61,6 +61,7 @@ let
       inherit dependencies;
     };
     default-extensions = config.ghci.extensions;
+    extra-source-files = ["changelog.md" "readme.md"];
   };
 
   exe = pkg: dir: merge (paths pkg // {
@@ -75,6 +76,18 @@ let
   });
 
 in {
+
+  polysemy-account = merge (project "polysemy-account" "Polysemy-Account") {
+    synopsis = "Account management with Servant and Polysemy";
+    library.dependencies = [
+      "chronos"
+      "elocrypt"
+      "password ^>=3.0"
+      "polysemy-db"
+      "random"
+      "sqel"
+    ];
+  };
 
   polysemy-account-api = merge (project "polysemy-account-api" "Polysemy-Account-Api") {
     synopsis = "Account management with Servant and Polysemy";
@@ -131,18 +144,6 @@ in {
         ];
       };
     };
-  };
-
-  polysemy-account = merge (project "polysemy-account" "Polysemy-Account") {
-    synopsis = "Account management with Servant and Polysemy";
-    library.dependencies = [
-      "chronos"
-      "elocrypt"
-      "password ^>=3.0"
-      "polysemy-db"
-      "random"
-      "sqel"
-    ];
   };
 
 }

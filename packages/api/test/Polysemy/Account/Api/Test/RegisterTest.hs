@@ -9,6 +9,7 @@ import Servant (ServerT, (:<|>) ((:<|>)))
 import Servant.Server (ServerError)
 import Sqel (Uid (Uid))
 
+import Polysemy.Account.Api.Effect.Authorize (Authorize)
 import Polysemy.Account.Api.Effect.Jwt (Jwt)
 import Polysemy.Account.Api.Routes (AccountApi, AuthApi)
 import Polysemy.Account.Api.Server.Account (accountServer)
@@ -35,7 +36,8 @@ type TestEffects =
   ]
 
 testServer ::
-  Members [Accounts Int [Privilege] !! AccountsError, Jwt (AuthedAccount Int [Privilege]) !! (), Log, Stop ServerError] r =>
+  Members [Accounts Int [Privilege] !! AccountsError, Authorize Int [Privilege] [Privilege]] r =>
+  Members [Jwt (AuthedAccount Int [Privilege]) !! (), Log, Stop ServerError] r =>
   ServerT TestApi (Sem r)
 testServer =
   accountServer :<|> authServer

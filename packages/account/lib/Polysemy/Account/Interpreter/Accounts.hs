@@ -1,11 +1,12 @@
+{-# options_haddock prune #-}
+
+-- | Description: Interpreters for 'Accounts' and 'Password'
 module Polysemy.Account.Interpreter.Accounts where
 
 import Chronos (Datetime)
-import Polysemy.Db.Effect.Id (Id, newId)
+import Polysemy.Db (Id, Query, Store, newId)
 import qualified Polysemy.Db.Effect.Query as Query
-import Polysemy.Db.Effect.Query (Query)
 import qualified Polysemy.Db.Effect.Store as Store
-import Polysemy.Db.Effect.Store (Store)
 import Sqel (Uid (Uid))
 
 import Polysemy.Account.Data.Account (Account (Account))
@@ -15,15 +16,15 @@ import Polysemy.Account.Data.AccountByName (AccountByName (AccountByName))
 import Polysemy.Account.Data.AccountName (AccountName)
 import qualified Polysemy.Account.Data.AccountStatus as AccountStatus
 import Polysemy.Account.Data.AccountStatus (AccountStatus)
+import qualified Polysemy.Account.Data.AccountsConfig as AccountsConfig
+import Polysemy.Account.Data.AccountsConfig (AccountsConfig (AccountsConfig))
 import Polysemy.Account.Data.AccountsError (
   AccountsClientError (Conflict, InvalidAuth, NoAccountId, NoAccountName),
   AccountsError (Client, Internal),
   )
 import Polysemy.Account.Data.AuthForAccount (AuthForAccount (AuthForAccount))
-import Polysemy.Account.Data.AuthToken (AuthToken (AuthToken))
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (AuthedAccount))
-import qualified Polysemy.Account.Data.Privilege as Privilege
-import Polysemy.Account.Data.Privilege (Privilege)
+import Polysemy.Account.Data.GeneratedPassword (GeneratedPassword (GeneratedPassword))
 import Polysemy.Account.Data.RawPassword (RawPassword (UnsafeRawPassword))
 import Polysemy.Account.Effect.Accounts (Accounts (..))
 import qualified Polysemy.Account.Effect.Password as Password
@@ -55,6 +56,13 @@ queryError ::
   InterpreterFor (Query q a) r
 queryError =
   resumeHoist (Internal . show)
+
+config ::
+  Show e =>
+  Members [Reader (AccountsConfig p) !! e, Stop AccountsError] r =>
+  Sem r (AccountsConfig p)
+config =
+  dbError ask
 
 byId ::
   ∀ i r a .
@@ -127,16 +135,18 @@ addPassword desc accountId password expiry = do
   let auth = Uid authId (AccountAuth accountId desc hashedPassword expiry)
   auth <$ Store.insert auth
 
-generateToken ::
-  Members [Password, Store i (AccountAuth i), Id i, Stop AccountsError] r =>
+generatePassword ::
+  Show e =>
+  Members [Password, Store i (AccountAuth i), Reader (AccountsConfig p) !! e, Id i, Stop AccountsError] r =>
   i ->
   Maybe Datetime ->
-  Sem r AuthToken
-generateToken accountId expiry = do
-  token <- Password.token
-  coerce token <$ addPassword "auth token" accountId token expiry
+  Sem r GeneratedPassword
+generatePassword accountId expiry = do
+  AccountsConfig {..} <- config
+  pw@(GeneratedPassword raw) <- Password.generate passwordLength
+  coerce pw <$ addPassword "auth token" accountId (UnsafeRawPassword raw) expiry
 
--- Fail if the account name is already present in the store.
+-- | Fail if the account name is already present in the store.
 -- If the account status is `Creating', however, a previous attempt has failed critically and the account can be
 -- overwritten.
 deletePreviousFailure ::
@@ -149,15 +159,14 @@ deletePreviousFailure _ =
   stop (Client Conflict)
 
 create ::
-  ∀ i p r .
-  Members [Store i (Account p), Query AccountByName (Maybe (Uid i (Account p)))] r =>
+  ∀ i p e r .
+  Members [Store i (Account p), Query AccountByName (Maybe (Uid i (Account p))), Reader (AccountsConfig p) !! e] r =>
   Members [Id i, Stop AccountsError] r =>
   AccountName ->
   p ->
   Sem r (Uid i (Account p))
 create name privs = do
-  existing <- Query.query (AccountByName name)
-  traverse_ deletePreviousFailure existing
+  traverse_ deletePreviousFailure =<< Query.query (AccountByName name)
   accountId <- newId
   let account = Uid accountId (Account name AccountStatus.Creating privs)
   account <$ Store.upsert account
@@ -198,24 +207,25 @@ updatePrivileges i f =
     Nothing ->
       stop (Client NoAccountId)
 
+-- | Interpret 'Accounts' using 'Store' and 'Query' from [Polysemy.Db]("Polysemy.Db") as the storage backend.
 interpretAccounts ::
   ∀ e i p r .
   Show e =>
   Member (Query AccountByName (Maybe (Uid i (Account p))) !! e) r =>
   Member (Query (AuthForAccount i) [Uid i (AccountAuth i)] !! e) r =>
-  Members [Password, Store i (Account p) !! e, Store i (AccountAuth i) !! e, Id i] r =>
-  Bool ->
-  p ->
+  Members [Password, Store i (Account p) !! e, Store i (AccountAuth i) !! e, Reader (AccountsConfig p) !! e, Id i] r =>
   InterpreterFor (Accounts i p !! AccountsError) r
-interpretAccounts initActive defaultPerms =
+interpretAccounts =
   interpretResumable \case
     Authenticate name password ->
       authenticate name password
-    GenerateToken accountId expiry ->
-      storeError (generateToken accountId expiry)
-    Create name ->
-      queryError (storeError (create name defaultPerms))
-    FinalizeCreate accountId ->
+    GeneratePassword accountId expiry ->
+      storeError (generatePassword accountId expiry)
+    Create name -> do
+      AccountsConfig {..} <- config
+      queryError (storeError (create name defaultPrivileges))
+    FinalizeCreate accountId -> do
+      AccountsConfig {..} <- config
       storeError (finishCreate initActive accountId)
     AddPassword accountId password expiry ->
       storeError (addPassword "user login" accountId password expiry)
@@ -238,56 +248,20 @@ interpretAccounts initActive defaultPerms =
     AllAuths ->
       storeError Store.fetchAll
 
-interpretAccountsPasswordStateWith ::
+-- | Interpret 'Accounts' and 'Password' using 'AtomicState' as storage backend.
+interpretAccountsState ::
   ∀ i p r .
   Ord i =>
   Show i =>
   Members [Log, Id i, Embed IO] r =>
-  Bool ->
-  p ->
+  AccountsConfig p ->
   [Uid i (Account p)] ->
   [Uid i (AccountAuth i)] ->
   InterpretersFor [Accounts i p !! AccountsError, Password] r
-interpretAccountsPasswordStateWith initActive defaultPerms accounts auths =
+interpretAccountsState conf accounts auths =
   interpretPasswordId .
+  raiseResumable (runReader conf) .
   interpretAccountByNameState accounts .
   interpretAuthForAccountState auths .
-  interpretAccounts initActive defaultPerms .
+  interpretAccounts .
   insertAt @1
-
-interpretAccountsPasswordState ::
-  ∀ i r .
-  Ord i =>
-  Show i =>
-  Members [Log, Id i, Embed IO] r =>
-  Bool ->
-  [Uid i (Account [Privilege])] ->
-  [Uid i (AccountAuth i)] ->
-  InterpretersFor [Accounts i [Privilege] !! AccountsError, Password] r
-interpretAccountsPasswordState initActive =
-  interpretAccountsPasswordStateWith initActive [Privilege.Web]
-
-interpretAccountsStateWith ::
-  ∀ i p r .
-  Ord i =>
-  Show i =>
-  Members [Log, Id i, Embed IO] r =>
-  Bool ->
-  p ->
-  [Uid i (Account p)] ->
-  [Uid i (AccountAuth i)] ->
-  InterpreterFor (Accounts i p !! AccountsError) r
-interpretAccountsStateWith initActive defaultPerms accounts auths =
-  interpretAccountsPasswordStateWith initActive defaultPerms accounts auths . raiseUnder
-
-interpretAccountsState ::
-  ∀ i r .
-  Ord i =>
-  Show i =>
-  Members [Log, Id i, Embed IO] r =>
-  Bool ->
-  [Uid i (Account [Privilege])] ->
-  [Uid i (AccountAuth i)] ->
-  InterpreterFor (Accounts i [Privilege] !! AccountsError) r
-interpretAccountsState initActive =
-  interpretAccountsStateWith initActive [Privilege.Web]

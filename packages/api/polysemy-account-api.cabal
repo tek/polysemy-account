@@ -15,14 +15,18 @@ copyright:      2023 Torsten Schmits
 license:        BSD-2-Clause-Patent
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    changelog.md
+    readme.md
 
 library
   exposed-modules:
       Polysemy.Account.Api
       Polysemy.Account.Api.Data.Authed
+      Polysemy.Account.Api.Effect.Authorize
       Polysemy.Account.Api.Effect.Jwt
-      Polysemy.Account.Api.Error
       Polysemy.Account.Api.Interpreter.Accounts
+      Polysemy.Account.Api.Interpreter.Authorize
       Polysemy.Account.Api.Interpreter.Jwt
       Polysemy.Account.Api.Native
       Polysemy.Account.Api.NativeContext

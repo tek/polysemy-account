@@ -1,5 +1,9 @@
+{-# options_haddock prune #-}
+
+-- | Description: Privilege data type
 module Polysemy.Account.Data.Privilege where
 
+-- | The stock privilege type, used only for admin endpoint authorization in @polysemy-account-api@.
 data Privilege =
   Web
   |
@@ -10,18 +14,5 @@ data Privilege =
 
 json ''Privilege
 
-isAdmin :: Foldable t => t Privilege -> Bool
-isAdmin =
-  elem Admin
-
-class AccountIsAdmin p where
-  accountIsAdmin :: p -> Bool
-
-instance AccountIsAdmin Privilege where
-  accountIsAdmin = \case
-    Admin -> True
-    _ -> False
-
-instance AccountIsAdmin [Privilege] where
-  accountIsAdmin =
-    any accountIsAdmin
+instance {-# overlapping #-} Default [Privilege] where
+  def = [Web]

@@ -4,7 +4,7 @@ import qualified Data.CaseInsensitive as CaseInsensitive
 import Exon.Quote (exon)
 import Network.Wai (Request, requestHeaders, requestMethod)
 import Network.Wai.Test (SRequest (SRequest), SResponse, Session, defaultRequest, runSession, setPath, srequest)
-import Polysemy.Db.Interpreter.Id (interpretIdNumFrom)
+import Polysemy.Db (interpretIdNumFrom)
 import Polysemy.Test (TestError (TestError), UnitTest)
 import Prelude hiding (get, put)
 import Servant (
@@ -21,9 +21,12 @@ import Servant.Auth.Server (IsSecure (NotSecure), cookieIsSecure, defaultCookieS
 import Sqel (Uid)
 import Zeugma (TestStack, runTestFrozen)
 
-import Polysemy.Account.Api (interpretJwt)
+import Polysemy.Account.Accounts (register)
+import Polysemy.Account.Api.Effect.Authorize (Authorize)
 import qualified Polysemy.Account.Api.Effect.Jwt as Jwt
 import Polysemy.Account.Api.Effect.Jwt (Jwt)
+import Polysemy.Account.Api.Interpreter.Authorize (interpretAuthorizeP)
+import Polysemy.Account.Api.Interpreter.Jwt (interpretJwt)
 import Polysemy.Account.Api.Native (AuthContext)
 import Polysemy.Account.Api.NativeContext (runServerSem)
 import Polysemy.Account.Api.Test.Data.Request (Headers, Method, methodUpper)
@@ -41,7 +44,6 @@ import Polysemy.Account.Data.RawPassword (rawPassword)
 import qualified Polysemy.Account.Effect.Accounts as Accounts
 import Polysemy.Account.Effect.Accounts (Accounts)
 import Polysemy.Account.Interpreter.Accounts (interpretAccountsState)
-import Polysemy.Account.Register (register)
 
 type ServerCtx (api :: Type) context =
   (
@@ -169,6 +171,7 @@ interpretTestClient =
 
 type TestEffects =
   [
+    Authorize Int [Privilege] [Privilege],
     Accounts Int [Privilege] !! AccountsError,
     Stop ServerError,
     Jwt (AuthedAccount Int [Privilege]) !! (),
@@ -183,8 +186,8 @@ interpretAccounts ::
 interpretAccounts accounts auths =
   mapError TestError .
   interpretIdNumFrom 3 .
-  interpretAccountsState False accounts auths .
-  raiseUnder2
+  interpretAccountsState def accounts auths .
+  raiseUnder3
 
 runServer ::
   Members [Error TestError, Stop Text, Log, Resource, Async, Race, Embed IO] r =>
@@ -195,7 +198,8 @@ runServer accounts auths =
   mapError TestError .
   raiseResumable interpretJwt .
   showStop @ServerError .
-  interpretAccounts accounts auths
+  interpretAccounts accounts auths .
+  interpretAuthorizeP
 
 runApiTestCtx ::
   ∀ (api :: Type) ctx .

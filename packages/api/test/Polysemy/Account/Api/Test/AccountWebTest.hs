@@ -4,8 +4,8 @@ import qualified Data.Aeson as Aeson
 import Exon (exon)
 import Network.HTTP.Types (Status (Status))
 import Network.Wai.Test (SResponse (SResponse))
-import Polysemy.Db.Effect.Id (Id)
-import Polysemy.Db.Effect.Query (Query)
+import Polysemy.Db (Id)
+import Polysemy.Db (Query)
 import Polysemy.Test (UnitTest, assertRight, (===))
 import Sqel (Uid (Uid))
 
@@ -20,7 +20,7 @@ import Polysemy.Account.Data.Account (Account (Account), AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
 import Polysemy.Account.Data.AccountByName (AccountByName)
 import Polysemy.Account.Data.AccountName (AccountName (AccountName))
-import Polysemy.Account.Data.AccountPassword (AccountPassword (AccountPassword))
+import Polysemy.Account.Data.HashedPassword (HashedPassword (HashedPassword))
 import qualified Polysemy.Account.Data.AccountStatus as AccountStatus
 import Polysemy.Account.Data.AuthForAccount (AuthForAccount)
 import Polysemy.Account.Data.Privilege (Privilege (Admin, Web))
@@ -49,9 +49,9 @@ accounts =
 auths :: [Uid Int (AccountAuth Int)]
 auths =
   [
-    Uid 1 (AccountAuth 2 "desc" (AccountPassword password) Nothing),
-    Uid 2 (AccountAuth 2 "desc" (AccountPassword password) Nothing),
-    Uid 3 (AccountAuth 1 "desc" (AccountPassword password) Nothing)
+    Uid 1 (AccountAuth 2 "desc" (HashedPassword password) Nothing),
+    Uid 2 (AccountAuth 2 "desc" (HashedPassword password) Nothing),
+    Uid 3 (AccountAuth 1 "desc" (HashedPassword password) Nothing)
   ]
 
 type Api = AuthApiP Int
@@ -128,4 +128,4 @@ test_registerFailUser =
   runApiTest @(AuthApiP Int) accounts auths authServer do
     SResponse (Status code _) _ body <- post "register" regFailBody
     409 === code
-    assertRight (ClientError "Account already exists") (first toText (Aeson.eitherDecode body))
+    assertRight (ClientError "Multiple accounts with same name") (first toText (Aeson.eitherDecode body))

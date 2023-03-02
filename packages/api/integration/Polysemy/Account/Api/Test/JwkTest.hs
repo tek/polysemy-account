@@ -1,7 +1,7 @@
 module Polysemy.Account.Api.Test.JwkTest where
 
 import qualified Data.Text as Text
-import Polysemy.Db.Data.DbError (DbError)
+import Polysemy.Db (DbError)
 import Polysemy.Hasql (Database)
 import Polysemy.Hasql.Migration (unMigrateSem)
 import Polysemy.Hasql.Test.Run (integrationTest)

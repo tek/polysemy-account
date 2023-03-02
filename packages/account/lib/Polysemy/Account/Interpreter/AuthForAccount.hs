@@ -1,3 +1,4 @@
+-- | Description: Interpreter for the query for auth info by account ID
 module Polysemy.Account.Interpreter.AuthForAccount where
 
 import Polysemy.Db (DbError, PureStore, Query, Store, interpretQueryStoreConc)
@@ -22,6 +23,7 @@ type AuthQuery i p =
     AtomicState (PureStore i (AccountAuth i))
   ]
 
+-- | Interpret @'Query' 'AccountAuth'@ and the corresponding 'Store' in an 'AtomicState'.
 interpretAuthForAccountState ::
   ∀ i r p .
   Ord i =>

@@ -1,5 +1,7 @@
+{-# options_haddock prune #-}
 {-# options_ghc -Wno-partial-type-signatures #-}
 
+-- | Description: Sqel Dd definitions for account and auth tables
 module Polysemy.Account.Db.Dd where
 
 import Prelude hiding (Mod)

@@ -1,3 +1,6 @@
+{-# options_haddock prune #-}
+
+-- | Description: Interpreter for the query for an account by name
 module Polysemy.Account.Interpreter.AccountByName where
 
 import Polysemy.Db (DbError, PureStore, Query, Store, interpretQueryStoreConc)
@@ -21,6 +24,7 @@ type AccountQuery i p =
     AtomicState (PureStore i (Account p))
   ]
 
+-- | Interpret @'Query' 'AccountByName'@ and the corresponding 'Store' in an 'AtomicState'.
 interpretAccountByNameState ::
   ∀ i p r .
   Ord i =>

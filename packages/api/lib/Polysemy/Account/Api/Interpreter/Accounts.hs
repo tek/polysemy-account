@@ -1,14 +1,9 @@
+-- | Description: Interpreters for 'Accounts' and 'Password' using PostgreSQL backends
 module Polysemy.Account.Api.Interpreter.Accounts where
 
 import Data.UUID (UUID)
-import Polysemy.Db.Data.DbError (DbError)
-import Polysemy.Db.Data.InitDbError (InitDbError)
-import Polysemy.Db.Effect.Store (Store)
-import Polysemy.Db.Interpreter.Id (interpretIdUuidIO)
-import Polysemy.Hasql (interpretTable)
-import Polysemy.Hasql.Effect.Database (Database)
-import Polysemy.Hasql.Effect.DbTable (StoreTable)
-import Polysemy.Hasql.Interpreter.Store (interpretStoreDb)
+import Polysemy.Db (DbError, Id, InitDbError, Store)
+import Polysemy.Hasql (Database, StoreTable, interpretStoreDb, interpretTable)
 import Sqel (CheckedProjection, Dd, FullCodec, primIdQuery)
 import Sqel.Codec (PrimColumn)
 import Sqel.Ext (Column, ReifyCodec, ReifyDd)
@@ -16,6 +11,7 @@ import Sqel.Query (checkQuery)
 
 import Polysemy.Account.Data.Account (Account)
 import Polysemy.Account.Data.AccountAuth (AccountAuth)
+import Polysemy.Account.Data.AccountsConfig (AccountsConfig)
 import Polysemy.Account.Data.AccountsError (AccountsError)
 import qualified Polysemy.Account.Db.Dd as Dd
 import Polysemy.Account.Db.Dd (DdAccount)
@@ -26,7 +22,8 @@ import Polysemy.Account.Effect.Password (Password)
 import Polysemy.Account.Interpreter.Accounts (interpretAccounts)
 import Polysemy.Account.Interpreter.Password (interpretPassword)
 
-interpretAccountDb ::
+-- | Interpret 'Polysemy.Hasql.DbTable' for 'Account'.
+interpretAccountTable ::
   ∀ i p s r .
   PrimColumn i =>
   Column p "privileges" s s =>
@@ -35,69 +32,59 @@ interpretAccountDb ::
   Dd s ->
   Members [Database !! DbError, Log, Embed IO] r =>
   InterpreterFor (StoreTable i (Account p) !! DbError) r
-interpretAccountDb priv =
+interpretAccountTable priv =
   interpretTable (Dd.accountSchema priv)
 
-interpretAccountAuthDb ::
+-- | Interpret 'Polysemy.Hasql.DbTable' for 'AccountAuth'.
+interpretAccountAuthTable ::
   ∀ i r .
   PrimColumn i =>
   Members [Database !! DbError, Log, Embed IO] r =>
   InterpreterFor (StoreTable i (AccountAuth i) !! DbError) r
-interpretAccountAuthDb =
+interpretAccountAuthTable =
   interpretTable Dd.accountAuthSchema
 
+-- | Interpret 'Store' for 'Account' as a 'Polysemy.Hasql.DbTable'.
 interpretAccountStore ::
-  ∀ i p t dt s r .
+  ∀ i p s r .
   PrimColumn i =>
   Column p "privileges" s s =>
   ReifyCodec FullCodec s p =>
   ReifyDd s =>
   Dd s ->
-  Members [StoreTable i (Account p) !! DbError, Time t dt, Embed IO, Log] r =>
+  Member (StoreTable i (Account p) !! DbError) r =>
   InterpreterFor (Store i (Account p) !! DbError) r
 interpretAccountStore priv =
   interpretStoreDb (Dd.accountSchema priv) (checkQuery primIdQuery (Dd.account priv))
 
+-- | Interpret 'Store' for 'AccountAuth' as a 'Polysemy.Hasql.DbTable'.
 interpretAccountAuthStore ::
-  ∀ i t dt r .
+  ∀ i r .
   PrimColumn i =>
-  Members [StoreTable i (AccountAuth i) !! DbError, Time t dt, Embed IO, Log] r =>
+  Member (StoreTable i (AccountAuth i) !! DbError) r =>
   InterpreterFor (Store i (AccountAuth i) !! DbError) r
 interpretAccountAuthStore =
   interpretStoreDb Dd.accountAuthSchema (checkQuery primIdQuery Dd.accountAuth)
 
-interpretAccountsPasswordDb ::
-  ∀ p t dt s r .
-  Members [Database !! DbError, Time t dt, Log, Error InitDbError, Embed IO] r =>
+-- | Interpret 'Accounts' and 'Password' using PostgreSQL as storage backend.
+interpretAccountsDb ::
+  ∀ p s r .
+  Members [Database !! DbError, Id UUID, Log, Error InitDbError, Embed IO] r =>
   Column p "privileges" s s =>
   ReifyCodec FullCodec s p =>
   ReifyDd s =>
   CheckedProjection (DdAccount UUID p s) (DdAccount UUID p s) =>
   Dd s ->
-  Bool ->
-  p ->
+  AccountsConfig p ->
   InterpretersFor [Accounts UUID p !! AccountsError, Password] r
-interpretAccountsPasswordDb priv initActive defaultPerms =
+interpretAccountsDb priv conf =
   interpretPassword .
-  interpretAccountDb priv .
+  raiseResumable (runReader conf) .
+  interpretAccountTable priv .
   interpretQueryAccountByNameDb priv .
-  interpretAccountAuthDb .
+  interpretAccountAuthTable .
   interpretQueryAuthForAccountDb .
-  interpretIdUuidIO .
   interpretAccountStore priv .
   interpretAccountAuthStore .
-  interpretAccounts initActive defaultPerms .
+  interpretAccounts .
   insertAt @1
-
-interpretAccountsDb ::
-  Members [Database !! DbError, Time t dt, Log, Error InitDbError, Embed IO] r =>
-  Column p "privileges" s s =>
-  ReifyCodec FullCodec s p =>
-  ReifyDd s =>
-  CheckedProjection (DdAccount UUID p s) (DdAccount UUID p s) =>
-  Dd s ->
-  Bool ->
-  p ->
-  InterpreterFor (Accounts UUID p !! AccountsError) r
-interpretAccountsDb priv initActive defaultPerms =
-  interpretAccountsPasswordDb priv initActive defaultPerms . raiseUnder

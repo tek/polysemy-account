@@ -1,3 +1,6 @@
+{-# options_haddock prune #-}
+
+-- | Description: Full Polysemy runners for Servant servers
 module Polysemy.Account.Api.NativeContext where
 
 import Control.Monad.Trans.Except (ExceptT (ExceptT))
@@ -37,8 +40,8 @@ import System.Log.FastLogger (fromLogStr)
 
 import Polysemy.Account.Data.Port (Port (Port))
 
-data ServerReady =
-  ServerReady
+-- | A dummy value used to indicate that the server has fully started up, using 'Sync'.
+data ServerReady = ServerReady
   deriving stock (Eq, Show)
 
 logErrors ::
@@ -76,6 +79,7 @@ lowerServer s lower ins srv =
             Just a -> a
             Nothing -> Left err500
 
+-- | Run a Servant server using a callback in @'Final' 'IO'@, sending logs to 'Log'.
 runServerSem ::
   ∀ (api :: Type) context r a .
   HasServer api context =>
@@ -93,6 +97,8 @@ toHandler :: IO (Maybe (Either ServerError a)) -> Handler a
 toHandler =
   Handler . ExceptT . fmap (fromMaybe (Left err500))
 
+-- | Run a Servant server using Warp in @'Final' 'IO'@, sending logs to 'Log', registering the shutdown handler with
+-- 'Interrupt'.
 runServer ::
   ∀ (api :: Type) context r .
   HasServer api context =>
@@ -115,7 +121,7 @@ runServer srv context (Port port) = do
         void (wv (Interrupt.register "api" h <$ s))
       settings =
         setHost "*6" $
-        setPort port $
+        setPort (fromIntegral port) $
         setBeforeMainLoop (void (wv (Sync.putBlock ServerReady <$ s))) $
         setInstallShutdownHandler shut $
         setGracefulShutdownTimeout (Just 0) $

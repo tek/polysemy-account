@@ -1,20 +1,33 @@
+-- | Description: Account management with Servant and Polysemy
 module Polysemy.Account.Api (
   -- * Effects
   Jwt,
   key,
   settings,
   makeToken,
+
   GenJwk,
   genJwk,
+
+  Authorize (Authorize),
+  authorize,
 
   -- * Interpreters
   interpretJwt,
   interpretJwtDb,
   interpretJwtPersistent,
   interpretJwtState,
+
   interpretGenJwk,
+
+  interpretAuthorizeWith,
+  interpretAuthorizeP,
+
   interpretAccountsDb,
-  interpretAccountsPasswordDb,
+  interpretAccountStore,
+  interpretAccountAuthStore,
+  interpretAccountTable,
+  interpretAccountAuthTable,
 
   -- * Servant
   Authed,
@@ -29,11 +42,8 @@ module Polysemy.Account.Api (
   runServerJwtWith,
   runServerSem,
   ServerReady (ServerReady),
-  authorize,
-  ensureUser,
-  ensureUser_,
-  ensureAdmin,
-  ensureAdmin_,
+  authorizeEndpoint,
+  AuthEndpointParam (..),
   accountOnly,
   accountOnly_,
   accountOnly1,
@@ -46,13 +56,19 @@ module Polysemy.Account.Api (
   adminOnly1_,
   adminOnly2,
   adminOnly2_,
-  pattern Active,
-  pattern Admin,
 ) where
 
 import Polysemy.Account.Api.Data.Authed (Authed, AuthedP)
+import Polysemy.Account.Api.Effect.Authorize (Authorize (Authorize), authorize)
 import Polysemy.Account.Api.Effect.Jwt (GenJwk, Jwt, genJwk, key, makeToken, settings)
-import Polysemy.Account.Api.Interpreter.Accounts (interpretAccountsDb, interpretAccountsPasswordDb)
+import Polysemy.Account.Api.Interpreter.Accounts (
+  interpretAccountAuthStore,
+  interpretAccountAuthTable,
+  interpretAccountStore,
+  interpretAccountTable,
+  interpretAccountsDb,
+  )
+import Polysemy.Account.Api.Interpreter.Authorize (interpretAuthorizeP, interpretAuthorizeWith)
 import Polysemy.Account.Api.Interpreter.Jwt (
   interpretGenJwk,
   interpretJwt,
@@ -66,8 +82,7 @@ import Polysemy.Account.Api.Routes (AccountApi, AccountApiP, AuthApi, AuthApiP)
 import Polysemy.Account.Api.Server.Account (accountServer)
 import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Server.AuthEndpoint (
-  pattern Active,
-  pattern Admin,
+  AuthEndpointParam (..),
   accountOnly,
   accountOnly1,
   accountOnly1_,
@@ -80,9 +95,5 @@ import Polysemy.Account.Api.Server.AuthEndpoint (
   adminOnly2,
   adminOnly2_,
   adminOnly_,
-  authorize,
-  ensureAdmin,
-  ensureAdmin_,
-  ensureUser,
-  ensureUser_,
+  authorizeEndpoint,
   )
