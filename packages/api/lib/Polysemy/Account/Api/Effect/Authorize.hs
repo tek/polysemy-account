@@ -2,6 +2,7 @@
 module Polysemy.Account.Api.Effect.Authorize where
 
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount)
+import Polysemy.Account.Data.Privilege (Privilege)
 
 -- | This effect is used by the combinators in "Polysemy.Account.Api.Server.AuthEndpoint" to decide whether an account
 -- is authorized to access an endpoint.
@@ -17,3 +18,6 @@ data Authorize i param priv :: Effect where
   Authorize :: param -> AuthedAccount i priv -> Authorize i param priv m (Maybe Text)
 
 makeSem ''Authorize
+
+-- | Convenience alias for using the default privilege type with 'Authorize'.
+type AuthorizeP i = Authorize i [Privilege] [Privilege]
