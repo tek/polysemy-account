@@ -2,6 +2,7 @@
 module Polysemy.Account (
   -- * Effects
   Accounts,
+  AccountsP,
   authenticate,
   generatePassword,
   create,
@@ -72,6 +73,7 @@ import Polysemy.Account.Data.Privilege (Privilege (..))
 import Polysemy.Account.Data.RawPassword (RawPassword (..), rawPassword)
 import Polysemy.Account.Effect.Accounts (
   Accounts,
+  AccountsP,
   addPassword,
   all,
   allAuths,
