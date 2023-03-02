@@ -19,7 +19,7 @@ import Servant (
   )
 import Servant.Auth.Server (IsSecure (NotSecure), cookieIsSecure, defaultCookieSettings)
 import Sqel (Uid)
-import Zeugma (TestStack, runTestFrozen)
+import Zeugma (TestStack, resumeTest, runTestFrozen)
 
 import Polysemy.Account.Accounts (register)
 import Polysemy.Account.Api.Effect.Authorize (Authorize)
@@ -129,14 +129,13 @@ run ::
 run ctx srv method path headers body =
   runSessionSemJwtCtx @api ctx srv (srequest (reqJson method path headers body))
 
--- TODO resumeTest
 makeAccount ::
   Members [Accounts Int [Privilege] !! AccountsError, Jwt (AuthedAccount Int [Privilege]) !! (), Error TestError] r =>
   AccountCredentials ->
   [Privilege] ->
   Sem r (Text, (ByteString, ByteString))
 makeAccount creds privs =
-  resumeHoistError @AccountsError (TestError . show) do
+  resumeTest @AccountsError do
     root <- register creds
     let i = root ^. #id
     Accounts.setStatus i AccountStatus.Active
