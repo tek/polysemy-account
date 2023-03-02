@@ -37,6 +37,7 @@ module Polysemy.Account (
   Account (..),
   AuthedAccount (..),
   AccountsConfig (..),
+  AccountsConfigP,
   AccountsError (..),
   AccountsClientError (..),
   AccountCredentials (..),
@@ -59,7 +60,7 @@ import Polysemy.Account.Data.Account (Account (..), AccountP)
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials (..))
 import Polysemy.Account.Data.AccountName (AccountName (..))
 import Polysemy.Account.Data.AccountStatus (AccountStatus (..))
-import Polysemy.Account.Data.AccountsConfig (AccountsConfig (..))
+import Polysemy.Account.Data.AccountsConfig (AccountsConfig (..), AccountsConfigP)
 import Polysemy.Account.Data.AccountsError (AccountsClientError (..), AccountsError (..))
 import Polysemy.Account.Data.AuthToken (AuthToken (..))
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (..), AuthedAccountP)
