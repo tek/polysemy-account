@@ -117,15 +117,15 @@ library
   ghc-options: -Wall -Wredundant-constraints -Wincomplete-uni-patterns -Wmissing-deriving-strategies -Widentities -Wunused-packages -fplugin=Polysemy.Plugin
   build-depends:
       base >=4.12 && <5
-    , chronos
-    , elocrypt
+    , chronos ==1.1.*
+    , elocrypt ==2.1.*
     , password ==3.0.*
     , polysemy
     , polysemy-db
     , polysemy-plugin
     , prelate >=0.5
-    , random
-    , servant-auth
+    , random ==1.2.*
+    , servant-auth ==0.4.*
     , sqel
   mixins:
       base hiding (Prelude)

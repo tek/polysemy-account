@@ -80,12 +80,12 @@ in {
   polysemy-account = merge (project "polysemy-account" "Polysemy-Account") {
     synopsis = "Account management with Servant and Polysemy";
     library.dependencies = [
-      "chronos"
-      "elocrypt"
+      "chronos ^>= 1.1"
+      "elocrypt ^>= 2.1"
       "password ^>=3.0"
       "polysemy-db"
-      "random"
-      "servant-auth"
+      "random ^>= 1.2"
+      "servant-auth ^>= 0.4"
       "sqel"
     ];
   };
@@ -93,25 +93,24 @@ in {
   polysemy-account-api = merge (project "polysemy-account-api" "Polysemy-Account-Api") {
     synopsis = "Account management with Servant and Polysemy";
     library.dependencies = [
-      "aeson"
-      "exon"
-      "fast-logger"
-      "jose"
+      "aeson ^>= 2.0"
+      "exon ^>= 1.4"
+      "fast-logger ^>= 3.1"
+      "jose ^>= 0.9"
       "polysemy-account"
-      "polysemy-conc"
+      "polysemy-conc ^>= 0.12"
       "polysemy-db"
       "polysemy-hasql"
-      "polysemy-log"
-      "servant"
-      "servant-auth"
-      "servant-auth-server"
-      "servant-server"
+      "servant ^>= 0.19"
+      "servant-auth ^>= 0.4"
+      "servant-auth-server ^>= 0.4"
+      "servant-server ^>= 0.19"
       "sqel"
       "transformers"
-      "uuid"
-      "wai"
-      "wai-extra"
-      "warp"
+      "uuid ^>= 1.3"
+      "wai ^>= 3.2"
+      "wai-extra ^>= 3.1"
+      "warp ^>= 3.3"
     ];
     tests = {
       polysemy-account-api-unit = exe "polysemy-account-api" "test" {
