@@ -4,7 +4,7 @@
 module Polysemy.Account.Api.Server.AuthEndpoint where
 
 import Exon (exon)
-import qualified Polysemy.Log as Log
+import qualified Log
 import Servant (ServerError)
 import Servant.Auth.Server (AuthResult (Authenticated))
 

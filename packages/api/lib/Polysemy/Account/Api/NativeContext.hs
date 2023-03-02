@@ -18,9 +18,8 @@ import Network.Wai.Handler.Warp (
 import qualified Network.Wai.Middleware.RequestLogger as Logger
 import Network.Wai.Middleware.RequestLogger (destination, mkRequestLogger)
 import qualified Polysemy.Conc.Effect.Interrupt as Interrupt
-import qualified Polysemy.Conc.Effect.Sync as Sync
 import Polysemy.Final (withWeavingToFinal)
-import qualified Polysemy.Log as Log
+import qualified Log
 import Servant (
   Context,
   DefaultErrorFormatters,
@@ -36,6 +35,7 @@ import Servant (
   serveWithContext,
   type (.++),
   )
+import qualified Sync
 import System.Log.FastLogger (fromLogStr)
 
 import Polysemy.Account.Data.Port (Port (Port))

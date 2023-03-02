@@ -51,6 +51,8 @@ module Polysemy.Account (
   AuthedAccountP,
   AuthToken (..),
   Port (Port),
+  AuthQuery,
+  AccountQuery,
 ) where
 
 import Prelude hiding (all)
@@ -85,5 +87,7 @@ import Polysemy.Account.Effect.Accounts (
   updatePrivileges,
   )
 import Polysemy.Account.Effect.Password (Password, check, generate, hash)
+import Polysemy.Account.Interpreter.AccountByName (AccountQuery)
 import Polysemy.Account.Interpreter.Accounts (interpretAccounts, interpretAccountsState)
+import Polysemy.Account.Interpreter.AuthForAccount (AuthQuery)
 import Polysemy.Account.Interpreter.Password (interpretPassword, interpretPasswordId)

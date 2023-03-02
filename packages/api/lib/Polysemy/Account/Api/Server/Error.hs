@@ -5,7 +5,7 @@ module Polysemy.Account.Api.Server.Error where
 
 import qualified Data.Aeson as Aeson
 import Exon.Quote (exon)
-import qualified Polysemy.Log as Log
+import qualified Log
 import Servant (ServerError, err401, err409, err500, errBody)
 
 import Polysemy.Account.Data.AccountsError (

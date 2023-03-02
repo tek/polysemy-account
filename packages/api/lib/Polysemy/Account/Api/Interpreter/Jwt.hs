@@ -4,9 +4,9 @@
 -- | Interpreters for 'Jwt'
 module Polysemy.Account.Api.Interpreter.Jwt where
 
+import Conc (interpretAtomic)
 import qualified Crypto.JOSE as JOSE
 import Crypto.JOSE (JWK, KeyMaterialGenParam (OKPGenParam), OKPCrv (Ed25519), genJWK)
-import Polysemy.Conc.AtomicState (interpretAtomic)
 import Polysemy.Db (DbError, InitDbError)
 import Polysemy.Hasql (Database, interpretAtomicStateDb, interpretTable)
 import Servant.Auth.JWT (ToJWT)
