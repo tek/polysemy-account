@@ -1,3 +1,5 @@
+{-# language NoFieldSelectors #-}
+
 -- | Description: Account data type
 module Polysemy.Account.Data.Account where
 

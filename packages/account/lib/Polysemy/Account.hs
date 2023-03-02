@@ -37,6 +37,7 @@ module Polysemy.Account (
   -- * Data types
   Account (..),
   AuthedAccount (..),
+  AccountAuth (..),
   AccountsConfig (..),
   AccountsConfigP,
   AccountsError (..),
@@ -60,6 +61,7 @@ import Prelude hiding (all)
 
 import Polysemy.Account.Accounts (login, register, unlockAccountName)
 import Polysemy.Account.Data.Account (Account (..), AccountP)
+import Polysemy.Account.Data.AccountAuth (AccountAuth (..))
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials (..))
 import Polysemy.Account.Data.AccountName (AccountName (..))
 import Polysemy.Account.Data.AccountStatus (AccountStatus (..))

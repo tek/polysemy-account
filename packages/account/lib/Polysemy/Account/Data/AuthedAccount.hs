@@ -1,3 +1,5 @@
+{-# language NoFieldSelectors #-}
+
 -- | Description: Authed account data type
 module Polysemy.Account.Data.AuthedAccount where
 
