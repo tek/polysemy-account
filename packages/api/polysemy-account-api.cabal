@@ -37,6 +37,8 @@ library
       Polysemy.Account.Db.Dd
       Polysemy.Account.Db.Interpreter.AccountByName
       Polysemy.Account.Db.Interpreter.AuthForAccount
+  reexported-modules:
+      Polysemy.Account
   hs-source-dirs:
       lib
   default-extensions:

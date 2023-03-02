@@ -92,26 +92,31 @@ in {
 
   polysemy-account-api = merge (project "polysemy-account-api" "Polysemy-Account-Api") {
     synopsis = "Account management with Servant and Polysemy";
-    library.dependencies = [
-      "aeson ^>= 2.0"
-      "exon ^>= 1.4"
-      "fast-logger ^>= 3.1"
-      "jose ^>= 0.9"
-      "polysemy-account"
-      "polysemy-conc ^>= 0.12"
-      "polysemy-db"
-      "polysemy-hasql"
-      "servant ^>= 0.19"
-      "servant-auth ^>= 0.4"
-      "servant-auth-server ^>= 0.4"
-      "servant-server ^>= 0.19"
-      "sqel"
-      "transformers"
-      "uuid ^>= 1.3"
-      "wai ^>= 3.2"
-      "wai-extra ^>= 3.1"
-      "warp ^>= 3.3"
-    ];
+    library = {
+      dependencies = [
+        "aeson ^>= 2.0"
+        "exon ^>= 1.4"
+        "fast-logger ^>= 3.1"
+        "jose ^>= 0.9"
+        "polysemy-account"
+        "polysemy-conc ^>= 0.12"
+        "polysemy-db"
+        "polysemy-hasql"
+        "servant ^>= 0.19"
+        "servant-auth ^>= 0.4"
+        "servant-auth-server ^>= 0.4"
+        "servant-server ^>= 0.19"
+        "sqel"
+        "transformers"
+        "uuid ^>= 1.3"
+        "wai ^>= 3.2"
+        "wai-extra ^>= 3.1"
+        "warp ^>= 3.3"
+      ];
+      reexported-modules = [
+        "Polysemy.Account"
+      ];
+    };
     tests = {
       polysemy-account-api-unit = exe "polysemy-account-api" "test" {
         dependencies = [
@@ -144,9 +149,6 @@ in {
         ];
       };
     };
-    reexported-modules = [
-      "Polysemy.Account"
-    ];
   };
 
 }
