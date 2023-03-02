@@ -147,8 +147,8 @@ generatePassword accountId expiry = do
   coerce pw <$ addPassword "auth token" accountId (UnsafeRawPassword raw) expiry
 
 -- | Fail if the account name is already present in the store.
--- If the account status is `Creating', however, a previous attempt has failed critically and the account can be
--- overwritten.
+-- If the account status is `AccountStatus.Creating', however, a previous attempt has failed critically and the account
+-- can be overwritten.
 deletePreviousFailure ::
   Members [Store i (Account p), Stop AccountsError] r =>
   Uid i (Account p) ->

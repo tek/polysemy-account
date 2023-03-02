@@ -1,3 +1,5 @@
+{-# options_haddock prune #-}
+
 -- | Description: Interpreter for the query for auth info by account ID
 module Polysemy.Account.Interpreter.AuthForAccount where
 
@@ -16,6 +18,7 @@ match (AuthForAccount queryId) a@(Uid _ (AccountAuth accountId _ _ _))
   | queryId == accountId = Just a
   | otherwise = Nothing
 
+-- | The effects handled by 'interpretAuthForAccountState'..
 type AuthQuery i p =
   [
     Query (AuthForAccount i) [Uid i (AccountAuth i)] !! DbError,

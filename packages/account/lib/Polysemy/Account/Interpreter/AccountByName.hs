@@ -17,6 +17,7 @@ match (AccountByName name) a@(Uid _ (Account accountName _ _))
   | name == accountName = Just a
   | otherwise = Nothing
 
+-- | The effects handled by 'interpretAccountByNameState'.
 type AccountQuery i p =
   [
     Query AccountByName (Maybe (Uid i (Account p))) !! DbError,
