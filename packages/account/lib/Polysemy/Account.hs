@@ -56,9 +56,11 @@ module Polysemy.Account (
   AccountsClientError (..),
   AccountCredentials (..),
   AccountName (..),
+  AccountAuthDescription (..),
   RawPassword,
   rawPassword,
   GeneratedPassword (..),
+  HashedPassword (..),
   AccountStatus (..),
   Privilege (..),
   AccountP,
@@ -74,6 +76,7 @@ import Prelude hiding (all)
 import Polysemy.Account.Accounts (login, register, unlockAccountName)
 import Polysemy.Account.Data.Account (Account (..), AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth (..))
+import Polysemy.Account.Data.AccountAuthDescription (AccountAuthDescription (..))
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials (..))
 import Polysemy.Account.Data.AccountName (AccountName (..))
 import Polysemy.Account.Data.AccountStatus (AccountStatus (..))
@@ -83,6 +86,7 @@ import Polysemy.Account.Data.AuthToken (AuthToken (..))
 import Polysemy.Account.Data.Authed (Authed, AuthedP)
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (..), AuthedAccountP)
 import Polysemy.Account.Data.GeneratedPassword (GeneratedPassword (..))
+import Polysemy.Account.Data.HashedPassword (HashedPassword (..))
 import Polysemy.Account.Data.Port (Port (..))
 import Polysemy.Account.Data.Privilege (Privilege (..))
 import Polysemy.Account.Data.RawPassword (RawPassword (..), rawPassword)
