@@ -31,12 +31,10 @@ module Polysemy.Account.Api (
   interpretAccountAuthTable,
 
   -- * Servant
-  Authed,
   AccountApi,
   AuthApi,
   accountServer,
   authServer,
-  AuthedP,
   AccountApiP,
   AuthApiP,
   runServerJwt,
@@ -97,4 +95,3 @@ import Polysemy.Account.Api.Server.AuthEndpoint (
   adminOnly_,
   authorizeEndpoint,
   )
-import Polysemy.Account.Data.Authed (Authed, AuthedP)

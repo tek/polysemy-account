@@ -29,6 +29,10 @@ module Polysemy.Account (
   interpretPassword,
   interpretPasswordId,
 
+  -- * Servant
+  Authed,
+  AuthedP,
+
   -- * Misc combinators
   register,
   login,
@@ -68,6 +72,7 @@ import Polysemy.Account.Data.AccountStatus (AccountStatus (..))
 import Polysemy.Account.Data.AccountsConfig (AccountsConfig (..), AccountsConfigP)
 import Polysemy.Account.Data.AccountsError (AccountsClientError (..), AccountsError (..))
 import Polysemy.Account.Data.AuthToken (AuthToken (..))
+import Polysemy.Account.Data.Authed (Authed, AuthedP)
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (..), AuthedAccountP)
 import Polysemy.Account.Data.GeneratedPassword (GeneratedPassword (..))
 import Polysemy.Account.Data.Port (Port (..))
