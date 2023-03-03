@@ -9,7 +9,7 @@ import Polysemy.Db (Query)
 import Polysemy.Test (UnitTest, assertRight, (===))
 import Sqel (Uid (Uid))
 
-import Polysemy.Account.Api.Routes (AuthApiP)
+import Polysemy.Account.Routes (AuthApiP)
 import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Server.Error (ClientError (ClientError))
 import Polysemy.Account.Api.Test.Data.Request (Method (Post))

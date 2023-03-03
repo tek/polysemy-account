@@ -36,6 +36,10 @@ module Polysemy.Account (
   -- * Servant
   Authed,
   AuthedP,
+  AccountApi,
+  AccountApiP,
+  AuthApi,
+  AuthApiP,
 
   -- * Misc combinators
   register,
@@ -105,3 +109,4 @@ import Polysemy.Account.Interpreter.AccountByName (AccountQuery)
 import Polysemy.Account.Interpreter.Accounts (interpretAccounts, interpretAccountsState)
 import Polysemy.Account.Interpreter.AuthForAccount (AuthQuery)
 import Polysemy.Account.Interpreter.Password (interpretPassword, interpretPasswordId)
+import Polysemy.Account.Routes (AccountApi, AccountApiP, AuthApi, AuthApiP)

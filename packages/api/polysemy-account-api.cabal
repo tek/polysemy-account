@@ -28,7 +28,6 @@ library
       Polysemy.Account.Api.Interpreter.Jwt
       Polysemy.Account.Api.Native
       Polysemy.Account.Api.NativeContext
-      Polysemy.Account.Api.Routes
       Polysemy.Account.Api.Server.Account
       Polysemy.Account.Api.Server.Auth
       Polysemy.Account.Api.Server.AuthEndpoint

@@ -9,7 +9,7 @@ import Sqel (Uid (Uid))
 import qualified Polysemy.Account.Accounts as Accounts
 import qualified Polysemy.Account.Api.Effect.Jwt as Jwt
 import Polysemy.Account.Api.Effect.Jwt (Jwt)
-import Polysemy.Account.Api.Routes (AuthApi)
+import Polysemy.Account.Routes (AuthApi)
 import Polysemy.Account.Api.Server.Error (accountsError, jwtError, serverError)
 import Polysemy.Account.Data.Account (Account (Account))
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials)

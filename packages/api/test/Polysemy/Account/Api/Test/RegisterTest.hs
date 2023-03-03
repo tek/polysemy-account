@@ -11,7 +11,7 @@ import Sqel (Uid (Uid))
 
 import Polysemy.Account.Effect.Authorize (Authorize)
 import Polysemy.Account.Api.Effect.Jwt (Jwt)
-import Polysemy.Account.Api.Routes (AccountApi, AuthApi)
+import Polysemy.Account.Routes (AccountApi, AuthApi)
 import Polysemy.Account.Api.Server.Account (accountServer)
 import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Test.Data.Request (Method (Get, Post, Put))

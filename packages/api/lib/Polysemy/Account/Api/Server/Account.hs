@@ -6,7 +6,7 @@ import Servant.API (NoContent (NoContent))
 import Sqel (Uid (Uid))
 
 import Polysemy.Account.Effect.Authorize (Authorize)
-import Polysemy.Account.Api.Routes (AccountApi)
+import Polysemy.Account.Routes (AccountApi)
 import Polysemy.Account.Api.Server.AuthEndpoint (AuthEndpointParam, adminOnly1_, adminOnly2_, adminOnly_)
 import Polysemy.Account.Api.Server.Error (accountsError)
 import Polysemy.Account.Data.Account (Account)

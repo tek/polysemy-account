@@ -27,12 +27,8 @@ module Polysemy.Account.Api (
   interpretAccountAuthTable,
 
   -- * Servant
-  AccountApi,
-  AuthApi,
   accountServer,
   authServer,
-  AccountApiP,
-  AuthApiP,
   runServerJwt,
   runServerJwtWith,
   runServer,
@@ -72,7 +68,6 @@ import Polysemy.Account.Api.Interpreter.Jwt (
   )
 import Polysemy.Account.Api.Native (runServerJwt, runServerJwtWith)
 import Polysemy.Account.Api.NativeContext (ServerReady (ServerReady), runServer, runServerSem)
-import Polysemy.Account.Api.Routes (AccountApi, AccountApiP, AuthApi, AuthApiP)
 import Polysemy.Account.Api.Server.Account (accountServer)
 import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Server.AuthEndpoint (

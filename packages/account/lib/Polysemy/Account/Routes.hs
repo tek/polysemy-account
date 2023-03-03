@@ -1,13 +1,13 @@
 -- | Description: Servant routes for the basic auth and account endpoints
-module Polysemy.Account.Api.Routes where
+module Polysemy.Account.Routes where
 
 import Servant.API (Capture, Get, JSON, NoContent, PostCreated, PostResetContent, Put, ReqBody, (:<|>), (:>))
 import Sqel (Uid)
 
-import Polysemy.Account.Data.Authed (Authed)
 import Polysemy.Account.Data.Account (Account)
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials)
 import Polysemy.Account.Data.AuthToken (AuthToken)
+import Polysemy.Account.Data.Authed (Authed)
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount)
 import Polysemy.Account.Data.Privilege (Privilege)
 

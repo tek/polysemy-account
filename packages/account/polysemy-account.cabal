@@ -48,6 +48,7 @@ library
       Polysemy.Account.Interpreter.Accounts
       Polysemy.Account.Interpreter.AuthForAccount
       Polysemy.Account.Interpreter.Password
+      Polysemy.Account.Routes
   hs-source-dirs:
       lib
   default-extensions:
@@ -126,6 +127,7 @@ library
     , polysemy-plugin
     , prelate >=0.5
     , random ==1.2.*
+    , servant ==0.19.*
     , servant-auth ==0.4.*
     , sqel
   mixins:
