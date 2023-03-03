@@ -5,6 +5,7 @@ module Polysemy.Account.Api.NativeContext where
 
 import Control.Monad.Trans.Except (ExceptT (ExceptT))
 import Exon.Quote (exon)
+import qualified Log
 import Network.Wai (Application)
 import qualified Network.Wai.Handler.Warp as Warp
 import Network.Wai.Handler.Warp (
@@ -19,7 +20,6 @@ import qualified Network.Wai.Middleware.RequestLogger as Logger
 import Network.Wai.Middleware.RequestLogger (destination, mkRequestLogger)
 import qualified Polysemy.Conc.Effect.Interrupt as Interrupt
 import Polysemy.Final (withWeavingToFinal)
-import qualified Log
 import Servant (
   Context,
   DefaultErrorFormatters,
@@ -74,8 +74,8 @@ lowerServer s lower ins srv =
     handle ma =
       cons (err <$> lower (handleErrors ma <$ s))
       where
-        err x =
-          ins x & \case
+        err =
+          ins >>> \case
             Just a -> a
             Nothing -> Left err500
 

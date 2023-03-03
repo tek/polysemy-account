@@ -40,9 +40,7 @@ runServerJwtWith ::
   Sem r ()
 runServerJwtWith ctx srv port = do
   jwtSettings <- Jwt.settings !>> throw "Jwt initialization failed"
-  runServer @api srv (context jwtSettings) port
-  where
-    context jwtSettings = jwtSettings :. defaultCookieSettings :. ctx
+  runServer @api srv (jwtSettings :. defaultCookieSettings :. ctx) port
 
 -- | Run a Servant server with JSON Web Token authentication using settings from 'Jwt'.
 runServerJwt ::
