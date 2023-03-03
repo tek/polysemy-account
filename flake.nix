@@ -4,7 +4,7 @@
   inputs = {
     hix.url = "git+https://git.tryp.io/tek/hix";
     hls.url = "github:haskell/haskell-language-server?ref=1.9.0.0";
-    polysemy-hasql.url = "git+https://git.tryp.io/tek/polysemy-hasql?ref=sqel";
+    polysemy-hasql.url = "git+https://git.tryp.io/tek/polysemy-hasql";
   };
 
   outputs = { hix, hls, polysemy-hasql, ...  }:
