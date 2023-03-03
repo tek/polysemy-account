@@ -9,10 +9,6 @@ module Polysemy.Account.Api (
   GenJwk,
   genJwk,
 
-  Authorize (Authorize),
-  AuthorizeP,
-  authorize,
-
   -- * Interpreters
   interpretJwt,
   interpretJwtDb,
@@ -57,7 +53,6 @@ module Polysemy.Account.Api (
   adminOnly2_,
 ) where
 
-import Polysemy.Account.Api.Effect.Authorize (Authorize (Authorize), AuthorizeP, authorize)
 import Polysemy.Account.Api.Effect.Jwt (GenJwk, Jwt, genJwk, key, makeToken, settings)
 import Polysemy.Account.Api.Interpreter.Accounts (
   interpretAccountAuthStore,

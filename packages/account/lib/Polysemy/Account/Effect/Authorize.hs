@@ -1,5 +1,5 @@
 -- | Description: Effect for API authorization
-module Polysemy.Account.Api.Effect.Authorize where
+module Polysemy.Account.Effect.Authorize where
 
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount)
 import Polysemy.Account.Data.Privilege (Privilege)

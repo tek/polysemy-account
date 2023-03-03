@@ -22,7 +22,7 @@ import Sqel (Uid)
 import Zeugma (TestStack, resumeTest, runTestFrozen)
 
 import Polysemy.Account.Accounts (register)
-import Polysemy.Account.Api.Effect.Authorize (Authorize)
+import Polysemy.Account.Effect.Authorize (Authorize)
 import qualified Polysemy.Account.Api.Effect.Jwt as Jwt
 import Polysemy.Account.Api.Effect.Jwt (Jwt)
 import Polysemy.Account.Api.Interpreter.Authorize (interpretAuthorizeP)

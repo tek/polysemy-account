@@ -9,7 +9,7 @@ import Servant (ServerT, (:<|>) ((:<|>)))
 import Servant.Server (ServerError)
 import Sqel (Uid (Uid))
 
-import Polysemy.Account.Api.Effect.Authorize (Authorize)
+import Polysemy.Account.Effect.Authorize (Authorize)
 import Polysemy.Account.Api.Effect.Jwt (Jwt)
 import Polysemy.Account.Api.Routes (AccountApi, AuthApi)
 import Polysemy.Account.Api.Server.Account (accountServer)

@@ -42,6 +42,7 @@ library
       Polysemy.Account.Data.Privilege
       Polysemy.Account.Data.RawPassword
       Polysemy.Account.Effect.Accounts
+      Polysemy.Account.Effect.Authorize
       Polysemy.Account.Effect.Password
       Polysemy.Account.Interpreter.AccountByName
       Polysemy.Account.Interpreter.Accounts

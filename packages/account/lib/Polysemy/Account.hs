@@ -22,6 +22,10 @@ module Polysemy.Account (
   check,
   generate,
 
+  Authorize (Authorize),
+  AuthorizeP,
+  authorize,
+
   -- * Interpreters
   interpretAccounts,
   interpretAccountsState,
@@ -95,6 +99,7 @@ import Polysemy.Account.Effect.Accounts (
   update,
   updatePrivileges,
   )
+import Polysemy.Account.Effect.Authorize (Authorize (Authorize), AuthorizeP, authorize)
 import Polysemy.Account.Effect.Password (Password, check, generate, hash)
 import Polysemy.Account.Interpreter.AccountByName (AccountQuery)
 import Polysemy.Account.Interpreter.Accounts (interpretAccounts, interpretAccountsState)

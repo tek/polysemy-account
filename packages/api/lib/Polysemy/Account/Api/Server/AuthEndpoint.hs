@@ -8,7 +8,7 @@ import qualified Log
 import Servant (ServerError)
 import Servant.Auth.Server (AuthResult (Authenticated))
 
-import Polysemy.Account.Api.Effect.Authorize (Authorize, authorize)
+import Polysemy.Account.Effect.Authorize (Authorize, authorize)
 import qualified Polysemy.Account.Data.AccountStatus as AccountStatus
 import Polysemy.Account.Data.AccountsError (AccountsError (Client, Internal))
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (AuthedAccount))

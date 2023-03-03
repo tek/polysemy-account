@@ -3,7 +3,7 @@ module Polysemy.Account.Api.Interpreter.Authorize where
 
 import Exon (exon)
 
-import Polysemy.Account.Api.Effect.Authorize (Authorize (Authorize))
+import Polysemy.Account.Effect.Authorize (Authorize (Authorize))
 import qualified Polysemy.Account.Data.AuthedAccount as AuthedAccount
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (AuthedAccount))
 import Polysemy.Account.Data.Privilege (Privilege)
