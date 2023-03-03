@@ -21,6 +21,7 @@ module Polysemy.Account.Api (
   interpretAuthorizeP,
 
   interpretAccountsDb,
+  interpretAccountsPDb,
   interpretAccountStore,
   interpretAccountAuthStore,
   interpretAccountTable,
@@ -57,6 +58,7 @@ import Polysemy.Account.Api.Interpreter.Accounts (
   interpretAccountStore,
   interpretAccountTable,
   interpretAccountsDb,
+  interpretAccountsPDb,
   )
 import Polysemy.Account.Api.Interpreter.Authorize (interpretAuthorizeP, interpretAuthorizeWith)
 import Polysemy.Account.Api.Interpreter.Jwt (

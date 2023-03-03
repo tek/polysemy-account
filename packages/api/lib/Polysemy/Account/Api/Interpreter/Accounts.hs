@@ -11,13 +11,13 @@ import Sqel.Query (checkQuery)
 
 import Polysemy.Account.Data.Account (Account)
 import Polysemy.Account.Data.AccountAuth (AccountAuth)
-import Polysemy.Account.Data.AccountsConfig (AccountsConfig)
+import Polysemy.Account.Data.AccountsConfig (AccountsConfig, AccountsConfigP)
 import Polysemy.Account.Data.AccountsError (AccountsError)
 import qualified Polysemy.Account.Db.Dd as Dd
-import Polysemy.Account.Db.Dd (DdAccount)
+import Polysemy.Account.Db.Dd (DdAccount, privileges)
 import Polysemy.Account.Db.Interpreter.AccountByName (interpretQueryAccountByNameDb)
 import Polysemy.Account.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)
-import Polysemy.Account.Effect.Accounts (Accounts)
+import Polysemy.Account.Effect.Accounts (Accounts, AccountsP)
 import Polysemy.Account.Effect.Password (Password)
 import Polysemy.Account.Interpreter.Accounts (interpretAccounts)
 import Polysemy.Account.Interpreter.Password (interpretPassword)
@@ -77,14 +77,23 @@ interpretAccountsDb ::
   Dd s ->
   AccountsConfig p ->
   InterpretersFor [Accounts UUID p !! AccountsError, Password] r
-interpretAccountsDb priv conf =
+interpretAccountsDb dd conf =
   interpretPassword .
   raiseResumable (runReader conf) .
-  interpretAccountTable priv .
-  interpretQueryAccountByNameDb priv .
+  interpretAccountTable dd .
+  interpretQueryAccountByNameDb dd .
   interpretAccountAuthTable .
   interpretQueryAuthForAccountDb .
-  interpretAccountStore priv .
+  interpretAccountStore dd .
   interpretAccountAuthStore .
   interpretAccounts .
   insertAt @1
+
+-- | Interpret 'AccountsP' and 'Password' using PostgreSQL as storage backend.
+interpretAccountsPDb ::
+  ∀ r .
+  Members [Database !! DbError, Id UUID, Log, Error InitDbError, Embed IO] r =>
+  AccountsConfigP ->
+  InterpretersFor [AccountsP UUID !! AccountsError, Password] r
+interpretAccountsPDb =
+  interpretAccountsDb privileges
