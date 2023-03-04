@@ -15,7 +15,7 @@ import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Test.Data.Request (Method (Get, Post, Put))
 import qualified Polysemy.Account.Api.Test.Effect.TestClient as TestClient
 import Polysemy.Account.Api.Test.Effect.TestClient (Response (Response), rawRequest)
-import Polysemy.Account.Api.Test.Interpreter.TestClient (runApiTest)
+import Polysemy.Account.Api.Test.Run (runApiTest)
 import Polysemy.Account.Data.Account (Account)
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials (AccountCredentials))
 import qualified Polysemy.Account.Data.AccountStatus as AccountStatus

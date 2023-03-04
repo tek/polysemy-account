@@ -21,7 +21,7 @@ import "servant-server" Servant.Server (Context (EmptyContext, (:.)), ServerErro
 
 import Polysemy.Account.Api.Test.Data.Request (Method (Get))
 import Polysemy.Account.Api.Test.Effect.TestClient (Response (Response), rawRequest)
-import Polysemy.Account.Api.Test.Interpreter.TestClient (interpretTestServerAccounts, runTestP)
+import Polysemy.Account.Api.Test.Run (interpretTestServerAccounts, runTestP)
 import Polysemy.Account.Data.AuthToken (AuthToken (AuthToken))
 import Polysemy.Account.Data.Privilege (Privileges)
 

@@ -12,6 +12,7 @@ import Polysemy.Account.Api.Test.Effect.TestClient (Response, TestClient)
 import qualified Polysemy.Account.Data.Account as Account
 import Polysemy.Account.Data.Account (Account)
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials (AccountCredentials))
+import Polysemy.Account.Data.AccountStatus (AccountStatus (Active))
 import Polysemy.Account.Data.AccountsError (AccountsError)
 import qualified Polysemy.Account.Data.AuthedAccount as AuthedAccount
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount)
@@ -66,6 +67,8 @@ request ::
   LByteString ->
   Sem r Response
 request method path body = do
-  i <- ((.id) <$> Accounts.byName "user") !>> do
-    ((.id) <$> resumeTest (register (AccountCredentials "user" (rawPassword "user"))))
+  i <- ((.id) <$> Accounts.byName "user") !>> resumeTest do
+    acc <- register (AccountCredentials "user" (rawPassword "user"))
+    Accounts.setStatus acc.id Active
+    pure acc.id
   requestWithId i method path [] body
