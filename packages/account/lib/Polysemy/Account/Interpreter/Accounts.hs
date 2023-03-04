@@ -101,8 +101,8 @@ authenticate ::
   RawPassword ->
   Sem r (Uid i (AccountAuth i))
 authenticate name password = do
-  Uid id' _ <- notFound =<< queryError (Query.query (AccountByName name))
-  auths <- queryError (Query.query (AuthForAccount id'))
+  Uid i _ <- notFound =<< queryError (Query.query (AccountByName name))
+  auths <- queryError (Query.query (AuthForAccount i))
   invalid =<< findM check auths
   where
     notFound =
@@ -237,6 +237,8 @@ interpretAccounts =
       queryError (byName name)
     Authed authId ->
       storeError (storeError @(Account _) (authedAccount authId))
+    Auths accountId ->
+      queryError (Query.query (AuthForAccount accountId))
     Update account ->
       storeError (Store.upsert account)
     Privileges i ->

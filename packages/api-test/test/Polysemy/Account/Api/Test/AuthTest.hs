@@ -19,8 +19,10 @@ import "servant-server" Servant.Server (Context (EmptyContext, (:.)), ServerErro
 
 import Polysemy.Account.Api.Test.Data.Request (Method (Get))
 import Polysemy.Account.Api.Test.Effect.TestClient (Response (Response), rawRequest)
-import Polysemy.Account.Api.Test.Run (runApiTestCtx)
+import Polysemy.Account.Api.Test.Request (request)
+import Polysemy.Account.Api.Test.Run (runApiTest, runApiTestCtx)
 import Polysemy.Account.Data.AuthToken (AuthToken (AuthToken))
+import Polysemy.Account.Data.AuthedAccount (AuthedAccountP)
 
 type instance BasicAuthCfg =
   BasicAuthData -> IO (AuthResult AuthToken)
@@ -46,10 +48,9 @@ serverSecond ::
   Member (Stop ServerError) r =>
   AuthResult AuthToken ->
   Sem r Int
-serverSecond (Authenticated _) =
-  pure 6
-serverSecond _ =
-  stop err401
+serverSecond = \case
+  Authenticated _ -> pure 6
+  _ -> stop err401
 
 server ::
   Member (Stop ServerError) r =>
@@ -80,3 +81,20 @@ test_authApi =
       Text.stripPrefix "JWT-Cookie=" . Text.takeWhile (';' /=) . decodeUtf8 . snd
     jwtHeader cookie =
       ("authorization", [exon|Bearer #{encodeUtf8 cookie}|])
+
+type AutoApi =
+  Auth '[JWT] (AuthedAccountP Int) :> "second" :> Get '[JSON] Int
+
+serverAuto ::
+  Member (Stop ServerError) r =>
+  AuthResult (AuthedAccountP Int) ->
+  Sem r Int
+serverAuto = \case
+  Authenticated _ -> pure 6
+  _ -> stop err401
+
+test_autoAuth :: UnitTest
+test_autoAuth =
+  runApiTest @AutoApi serverAuto do
+    Response _ _ body <- request Get "second" ""
+    "6" === body

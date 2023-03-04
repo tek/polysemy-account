@@ -43,7 +43,9 @@ requestWithId ::
   LByteString ->
   Sem r Response
 requestWithId i method path headers body = do
-  authed <- resumeTest (Accounts.authed i)
+  authed <- resumeTest do
+    auth <- note "No auths for this account" . head =<< Accounts.auths i
+    Accounts.authed auth.id
   requestWithAuth authed method path headers body
 
 -- | Make an authenticated test request with the given 'Account'.

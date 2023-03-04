@@ -39,6 +39,8 @@ data Accounts i p :: Effect where
   ByName :: AccountName -> Accounts i p m (Uid i (Account p))
   -- | Look up an account and return its auth info.
   Authed :: i -> Accounts i p m (AuthedAccount i p)
+  -- | Look up auths for an account
+  Auths :: i -> Accounts i p m [Uid i (AccountAuth i)]
   -- | Overwrite an existing account.
   Update :: Uid i (Account p) -> Accounts i p m ()
   -- | Look up an account's privileges.
