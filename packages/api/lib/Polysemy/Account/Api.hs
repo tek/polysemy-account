@@ -38,6 +38,7 @@ module Polysemy.Account.Api (
   runServerJwtWith,
   runServer,
   runServerSem,
+  AuthContext,
   ServerReady (ServerReady),
   authorizeEndpoint,
   AuthEndpointParam (..),
@@ -73,7 +74,7 @@ import Polysemy.Account.Api.Interpreter.Jwt (
   interpretJwtPersistent,
   interpretJwtState,
   )
-import Polysemy.Account.Api.Native (runServerJwt, runServerJwtWith)
+import Polysemy.Account.Api.Native (AuthContext, runServerJwt, runServerJwtWith)
 import Polysemy.Account.Api.NativeContext (ServerReady (ServerReady), runServer, runServerSem)
 import Polysemy.Account.Api.Server.Account (accountServer)
 import Polysemy.Account.Api.Server.Auth (authServer)
