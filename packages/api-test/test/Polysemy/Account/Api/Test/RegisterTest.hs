@@ -59,7 +59,7 @@ registerPayload =
 
 test_register :: UnitTest
 test_register =
-  runApiTest @TestApi testServer [] [] $ resumeTest @AccountsError do
+  runApiTest @TestApi testServer $ resumeTest @AccountsError do
     root <- registerAdmin (AccountCredentials "root" (rawPassword "root"))
     (_, rootAuth) <- TestClient.makeToken root
     Response statusCreated _ _ <- rawRequest Post "auth/register" [] registerPayload

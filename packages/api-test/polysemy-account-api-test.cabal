@@ -197,7 +197,6 @@ test-suite polysemy-account-api-unit
       aeson
     , base >=4.12 && <5
     , exon
-    , http-types
     , polysemy
     , polysemy-account
     , polysemy-account-api
@@ -207,7 +206,6 @@ test-suite polysemy-account-api-unit
     , servant-auth-server
     , servant-server
     , sqel
-    , wai-extra
     , zeugma
   mixins:
       base hiding (Prelude)

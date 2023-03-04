@@ -13,20 +13,14 @@ import Servant.Auth.Server (
   BasicAuthCfg,
   Cookie,
   FromBasicAuthData (..),
-  FromJWT,
   JWT,
-  ToJWT,
   )
 import "servant-server" Servant.Server (Context (EmptyContext, (:.)), ServerError, ServerT, err401)
 
 import Polysemy.Account.Api.Test.Data.Request (Method (Get))
 import Polysemy.Account.Api.Test.Effect.TestClient (Response (Response), rawRequest)
-import Polysemy.Account.Api.Test.Run (interpretTestServerAccounts, runTestP)
+import Polysemy.Account.Api.Test.Run (runApiTestCtx)
 import Polysemy.Account.Data.AuthToken (AuthToken (AuthToken))
-import Polysemy.Account.Data.Privilege (Privileges)
-
-instance FromJWT AuthToken where
-instance ToJWT AuthToken where
 
 type instance BasicAuthCfg =
   BasicAuthData -> IO (AuthResult AuthToken)
@@ -75,8 +69,7 @@ authHeader =
 
 test_authApi :: UnitTest
 test_authApi =
-  runTestP 1 $
-  interpretTestServerAccounts @TestApi @_ @Int @Privileges (auth :. EmptyContext) server def [] [] do
+  runApiTestCtx @TestApi (auth :. EmptyContext) server [] [] do
     Response _ headers _ <- rawRequest Get "first" [authHeader] ""
     cookie <- evalMaybe (firstJust isJwtHeader headers)
     Response statusOk _ body <- rawRequest Get "second" [jwtHeader cookie] ""

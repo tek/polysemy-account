@@ -160,13 +160,11 @@ in {
         dependencies = [
           "aeson"
           "exon"
-          "http-types"
           "polysemy-account"
           "polysemy-account-api"
           "servant-auth-server"
           "servant-server"
           "sqel"
-          "wai-extra"
           "zeugma"
         ];
       };

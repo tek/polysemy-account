@@ -9,7 +9,7 @@ import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Server.Error (ClientError (ClientError))
 import Polysemy.Account.Api.Test.Data.Request (Method (Post))
 import Polysemy.Account.Api.Test.Effect.TestClient (Response (Response), TestClientP, rawRequest)
-import Polysemy.Account.Api.Test.Run (runApiTest)
+import Polysemy.Account.Api.Test.Run (runApiTestWith)
 import Polysemy.Account.Data.Account (Account (Account), AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
 import Polysemy.Account.Data.AccountName (AccountName (AccountName))
@@ -64,7 +64,7 @@ post endpoint =
 
 test_loginUser :: UnitTest
 test_loginUser =
-  runApiTest @(AuthApiP Int) authServer accounts auths do
+  runApiTestWith @(AuthApiP Int) authServer accounts auths do
     Response code _ _ <- post "login" postAccountBody
     205 === code
 
@@ -74,7 +74,7 @@ postFailAccountBody =
 
 test_failLoginUser :: UnitTest
 test_failLoginUser =
-  runApiTest @(AuthApiP Int) authServer accounts auths do
+  runApiTestWith @(AuthApiP Int) authServer accounts auths do
     Response code _ _ <- post "login" postFailAccountBody
     401 === code
 
@@ -84,7 +84,7 @@ regBody =
 
 test_registerUser :: UnitTest
 test_registerUser =
-  runApiTest @(AuthApiP Int) authServer accounts auths do
+  runApiTestWith @(AuthApiP Int) authServer accounts auths do
     Response code _ _ <- post "register" regBody
     201 === code
 
@@ -94,7 +94,7 @@ regFailBody =
 
 test_registerFailUser :: UnitTest
 test_registerFailUser =
-  runApiTest @(AuthApiP Int) authServer accounts auths do
+  runApiTestWith @(AuthApiP Int) authServer accounts auths do
     Response code _ body <- post "register" regFailBody
     409 === code
     assertRight (ClientError "Multiple accounts with same name") (first toText (Aeson.eitherDecode body))
