@@ -4,7 +4,6 @@ import qualified Data.Aeson as Aeson
 import Exon (exon)
 import Network.HTTP.Types (Status (Status))
 import Network.Wai.Test (SResponse (SResponse))
-import Polysemy.Db (Id, Query)
 import Polysemy.Test (UnitTest, assertRight, (===))
 import Sqel (Uid (Uid))
 
@@ -12,17 +11,14 @@ import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Server.Error (ClientError (ClientError))
 import Polysemy.Account.Api.Test.Data.Request (Method (Post))
 import qualified Polysemy.Account.Api.Test.Effect.TestClient as TestClient
-import Polysemy.Account.Api.Test.Effect.TestClient (TestClient)
-import Polysemy.Account.Api.Test.Request (runApiTest)
+import Polysemy.Account.Api.Test.Effect.TestClient (TestClientP)
+import Polysemy.Account.Api.Test.Interpreter.TestClient (runApiTest)
 import Polysemy.Account.Data.Account (Account (Account), AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
-import Polysemy.Account.Data.AccountByName (AccountByName)
 import Polysemy.Account.Data.AccountName (AccountName (AccountName))
 import qualified Polysemy.Account.Data.AccountStatus as AccountStatus
-import Polysemy.Account.Data.AuthForAccount (AuthForAccount)
 import Polysemy.Account.Data.HashedPassword (HashedPassword (HashedPassword))
 import Polysemy.Account.Data.Privilege (Privilege (Admin, Web))
-import Polysemy.Account.Effect.Accounts (AccountsP)
 import Polysemy.Account.Routes (AuthApiP)
 
 user1 :: Text
@@ -53,29 +49,6 @@ auths =
     Uid 3 (AccountAuth 1 "desc" (HashedPassword password) Nothing)
   ]
 
-type Api = AuthApiP Int
-
-type AccountQuery = Query AccountByName (Maybe (Uid Int AccountP)) !! ()
-
-type AuthQuery = Query (AuthForAccount Int) [Uid Int (AccountAuth Int)] !! ()
-
-type Effects =
-  [
-    AccountsP Int,
-    Id Int,
-    Log
-  ]
-
--- server ::
---   Members [Jwt (AuthedAccount Int Privileges) !! (), Async, Race, Resource] r =>
---   Server (AuthApiP Int) [JWTSettings, CookieSettings] r =>
---   TestServer (AuthApiP Int) r
--- server =
---   hoistServerWithContext (Proxy @(AuthApiP Int)) ctx interpretEndpoint (authServer @Int)
---   where
---     ctx =
---       Proxy @[JWTSettings, CookieSettings]
-
 target :: Text
 target =
   [exon|"token"|]
@@ -85,7 +58,7 @@ postAccountBody =
   [exon|{"username":"#{encodeUtf8 user1}","password":"#{encodeUtf8 password}"}|]
 
 post ::
-  Member TestClient r =>
+  Member (TestClientP i) r =>
   Text ->
   LByteString ->
   Sem r SResponse
@@ -94,7 +67,7 @@ post endpoint =
 
 test_loginUser :: UnitTest
 test_loginUser =
-  runApiTest @(AuthApiP Int) accounts auths authServer do
+  runApiTest @(AuthApiP Int) authServer accounts auths do
     SResponse (Status code _) _ _ <- post "login" postAccountBody
     205 === code
 
@@ -104,7 +77,7 @@ postFailAccountBody =
 
 test_failLoginUser :: UnitTest
 test_failLoginUser =
-  runApiTest @(AuthApiP Int) accounts auths authServer do
+  runApiTest @(AuthApiP Int) authServer accounts auths do
     SResponse (Status code _) _ _ <- post "login" postFailAccountBody
     401 === code
 
@@ -114,7 +87,7 @@ regBody =
 
 test_registerUser :: UnitTest
 test_registerUser =
-  runApiTest @(AuthApiP Int) accounts auths authServer do
+  runApiTest @(AuthApiP Int) authServer accounts auths do
     SResponse (Status code _) _ _ <- post "register" regBody
     201 === code
 
@@ -124,7 +97,7 @@ regFailBody =
 
 test_registerFailUser :: UnitTest
 test_registerFailUser =
-  runApiTest @(AuthApiP Int) accounts auths authServer do
+  runApiTest @(AuthApiP Int) authServer accounts auths do
     SResponse (Status code _) _ body <- post "register" regFailBody
     409 === code
     assertRight (ClientError "Multiple accounts with same name") (first toText (Aeson.eitherDecode body))

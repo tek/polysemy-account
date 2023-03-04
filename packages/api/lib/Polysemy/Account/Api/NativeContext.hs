@@ -28,7 +28,7 @@ import Servant (
   HasContextEntry,
   HasServer,
   Server,
-  ServerError,
+  ServerError (errHTTPCode),
   ServerT,
   err500,
   hoistServerWithContext,
@@ -51,7 +51,8 @@ logErrors ::
 logErrors ma =
   ma >>= \case
     Right a -> pure (Right a)
-    Left err -> Left err <$ Log.error (show err)
+    Left err | errHTTPCode err >= 500 -> Left err <$ Log.error (show err)
+    Left err -> Left err <$ Log.debug (show err)
 
 lowerServer ::
   ∀ (api :: Type) context r s .

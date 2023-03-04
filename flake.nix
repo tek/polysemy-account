@@ -36,12 +36,13 @@
     };
 
   in hix.lib.pro ({ config, lib, ... }: {
-    main = "polysemy-account-api";
+    main = "polysemy-account-api-test";
     overrides = { inherit all; };
     depsFull = [polysemy-hasql];
     packages = {
       polysemy-account = ./packages/account;
       polysemy-account-api = ./packages/api;
+      polysemy-account-api-test = ./packages/api-test;
     };
     devGhc.compiler = "ghc925";
     hpack.packages = import ./ops/hpack.nix { inherit config lib; };

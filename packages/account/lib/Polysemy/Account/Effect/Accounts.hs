@@ -26,7 +26,7 @@ data Accounts i p :: Effect where
   -- | Generate a fresh password.
   GeneratePassword :: i -> Maybe Datetime -> Accounts i p m GeneratedPassword
   -- | Add an account to the storage backend, without authentication.
-  Create :: AccountName -> Accounts i p m (Uid i (Account p))
+  Create :: AccountName -> Maybe p -> Accounts i p m (Uid i (Account p))
   -- | Mark an account as fully created.
   FinalizeCreate :: i -> Accounts i p m (Uid i (Account p))
   -- | Associate an account with a new password, with optional expiry time.

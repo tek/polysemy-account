@@ -4,7 +4,7 @@
 module Polysemy.Account.Interpreter.Accounts where
 
 import Chronos (Datetime)
-import Polysemy.Db (Id, Query, Store, newId)
+import Polysemy.Db (DbError, Id, Query, Store, newId)
 import qualified Polysemy.Db.Effect.Query as Query
 import qualified Polysemy.Db.Effect.Store as Store
 import Sqel (Uid (Uid))
@@ -221,9 +221,9 @@ interpretAccounts =
       authenticate name password
     GeneratePassword accountId expiry ->
       storeError (generatePassword accountId expiry)
-    Create name -> do
+    Create name privs -> do
       AccountsConfig {..} <- config
-      queryError (storeError (create name defaultPrivileges))
+      queryError (storeError (create name (fromMaybe defaultPrivileges privs)))
     FinalizeCreate accountId -> do
       AccountsConfig {..} <- config
       storeError (finishCreate initActive accountId)
@@ -249,6 +249,24 @@ interpretAccounts =
       storeError Store.fetchAll
 
 -- | Interpret 'Accounts' and 'Password' using 'AtomicState' as storage backend.
+--
+-- This variant uses 'Reader' for the config.
+interpretAccountsState' ::
+  ∀ i p r .
+  Ord i =>
+  Show i =>
+  Members [Reader (AccountsConfig p) !! DbError, Id i, Log, Embed IO] r =>
+  [Uid i (Account p)] ->
+  [Uid i (AccountAuth i)] ->
+  InterpretersFor [Accounts i p !! AccountsError, Password] r
+interpretAccountsState' accounts auths =
+  interpretPasswordId .
+  interpretAccountByNameState accounts .
+  interpretAuthForAccountState auths .
+  interpretAccounts .
+  insertAt @1
+
+-- | Interpret 'Accounts' and 'Password' using 'AtomicState' as storage backend.
 interpretAccountsState ::
   ∀ i p r .
   Ord i =>
@@ -257,11 +275,7 @@ interpretAccountsState ::
   AccountsConfig p ->
   [Uid i (Account p)] ->
   [Uid i (AccountAuth i)] ->
-  InterpretersFor [Accounts i p !! AccountsError, Password] r
+  InterpretersFor [Accounts i p !! AccountsError, Password, Reader (AccountsConfig p) !! DbError] r
 interpretAccountsState conf accounts auths =
-  interpretPasswordId .
   raiseResumable (runReader conf) .
-  interpretAccountByNameState accounts .
-  interpretAuthForAccountState auths .
-  interpretAccounts .
-  insertAt @1
+  interpretAccountsState' accounts auths

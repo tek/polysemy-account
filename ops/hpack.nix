@@ -120,22 +120,6 @@ in {
       ];
     };
     tests = {
-      polysemy-account-api-unit = exe "polysemy-account-api" "test" {
-        dependencies = [
-          "aeson"
-          "case-insensitive"
-          "exon"
-          "http-types"
-          "polysemy-account"
-          "polysemy-db"
-          "servant-auth-server"
-          "servant-server"
-          "sqel"
-          "wai"
-          "wai-extra"
-          "zeugma"
-        ];
-      };
       polysemy-account-api-integration = exe "polysemy-account-api" "integration" {
         dependencies = [
           "polysemy-account"
@@ -148,6 +132,41 @@ in {
           "sqel"
           "tasty"
           "uuid"
+        ];
+      };
+    };
+  };
+
+  polysemy-account-api-test = merge (project "polysemy-account-api-test" "Polysemy-Account-Api-Test") {
+    synopsis = "Testing tools for polysemy-account-api";
+    library = {
+      dependencies = [
+        "case-insensitive"
+        "exon"
+        "polysemy-account"
+        "polysemy-account-api"
+        "polysemy-db"
+        "servant-auth-server"
+        "servant-server"
+        "sqel"
+        "wai"
+        "wai-extra"
+        "zeugma"
+      ];
+    };
+    tests = {
+      polysemy-account-api-unit = exe "polysemy-account-api-test" "test" {
+        dependencies = [
+          "aeson"
+          "exon"
+          "http-types"
+          "polysemy-account"
+          "polysemy-account-api"
+          "servant-auth-server"
+          "servant-server"
+          "sqel"
+          "wai-extra"
+          "zeugma"
         ];
       };
     };

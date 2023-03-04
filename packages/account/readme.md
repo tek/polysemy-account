@@ -5,3 +5,5 @@ managing accounts with Argon2-hashed password authentication.
 
 Consult the [Haddocks](https://hackage.haskell.org/package/polysemy-account/docs/Polysemy-Account.html) for more
 documentation.
+
+*Note*: Only the root module, `Polysemy.Account`, adheres to the PVP.

@@ -5,3 +5,5 @@ This is a Haskell library for [Polysemy](https://hackage.haskell.org/package/pol
 
 Consult the [Haddocks](https://hackage.haskell.org/package/polysemy-account-api/docs/Polysemy-Account-Api.html) for more
 documentation.
+
+*Note*: Only the root module, `Polysemy.Account.Api`, adheres to the PVP.

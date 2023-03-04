@@ -3,7 +3,7 @@
 -- | Description: Config data type for the effect 'Polysemy.Account.Accounts'.
 module Polysemy.Account.Data.AccountsConfig where
 
-import Polysemy.Account.Data.Privilege (Privileges)
+import Polysemy.Account.Data.Privilege (DefaultPrivileges (defaultAdminPrivileges, defaultPrivileges), Privileges)
 
 -- | The configuration for the interpreter for 'Polysemy.Account.Accounts'.
 --
@@ -19,7 +19,9 @@ data AccountsConfig p =
     -- | Whether new accounts should immediately be marked as active rather than pending, allowing login.
     initActive :: Bool,
     -- | The privileges assigned to a new account.
-    defaultPrivileges :: p
+    defaultPrivileges :: p,
+    -- | The privileges assigned to a new admin account (only for tests).
+    defaultAdminPrivileges :: p
   }
   deriving stock (Eq, Show, Generic)
 
@@ -28,9 +30,12 @@ json ''AccountsConfig
 -- | Convenience alias for using the default privilege type with 'AccountsConfig'.
 type AccountsConfigP = AccountsConfig Privileges
 
-instance Default p => Default (AccountsConfig p) where
+instance {-# overlappable #-} (
+    DefaultPrivileges p
+  ) => Default (AccountsConfig p) where
   def = AccountsConfig {
     passwordLength = 20,
     initActive = False,
-    defaultPrivileges = def
+    defaultPrivileges = defaultPrivileges,
+    defaultAdminPrivileges = defaultAdminPrivileges
   }

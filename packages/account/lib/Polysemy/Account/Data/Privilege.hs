@@ -4,7 +4,7 @@
 module Polysemy.Account.Data.Privilege where
 
 import qualified Data.Set as Set
-import GHC.Exts (IsList)
+import GHC.Exts (IsList (fromList))
 
 -- | The stock privilege type, used only for admin endpoint authorization in @polysemy-account-api@.
 data Privilege =
@@ -13,7 +13,7 @@ data Privilege =
   Api
   |
   Admin
-  deriving stock (Eq, Show, Generic, Ord, Enum)
+  deriving stock (Eq, Show, Generic, Ord, Enum, Bounded)
 
 json ''Privilege
 
@@ -53,3 +53,15 @@ unsatisfiedPrivileges (RequiredPrivileges (Privileges required)) privs =
   case Set.filter (not . flip satisfiesPrivilege privs) required of
     [] -> Nothing
     missing -> Just (Privileges missing)
+
+-- | Default values for user and admin privileges.
+class DefaultPrivileges p where
+  -- | The privileges assigned to a newly created user if no explicit value was specified.
+  defaultPrivileges :: p
+
+  -- | The privileges assigned to a newly created admin if no explicit value was specified.
+  defaultAdminPrivileges :: p
+
+instance DefaultPrivileges Privileges where
+  defaultPrivileges = [Web]
+  defaultAdminPrivileges = fromList (enumFromTo minBound maxBound)
