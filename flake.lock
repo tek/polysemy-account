@@ -3996,11 +3996,11 @@
         "sqel": "sqel"
       },
       "locked": {
-        "lastModified": 1677934004,
-        "narHash": "sha256-YcS/M3HN5Ronh0hzHmqeMG5Jo9gp9HPdNjP46ZTS31g=",
+        "lastModified": 1677941650,
+        "narHash": "sha256-r+cRGO2+9fr1NJ7IS43ber4CfUZ0jEZ4fMAoGcB5HTE=",
         "ref": "refs/heads/main",
-        "rev": "2d496be5e8a8be1ef9077810db941ced0dd61372",
-        "revCount": 326,
+        "rev": "e82dedbbfe1c84056bd1095ea1fa972c0c62be8d",
+        "revCount": 329,
         "type": "git",
         "url": "https://git.tryp.io/tek/polysemy-hasql"
       },
@@ -4351,11 +4351,11 @@
         "hls": "hls_7"
       },
       "locked": {
-        "lastModified": 1677933787,
-        "narHash": "sha256-XEWxy8XSrNtjjFVChxR0YZ+PnnsyRbvjFgSy2ceAXK8=",
+        "lastModified": 1677941633,
+        "narHash": "sha256-nwjZeQDFnCU882j0jwgItAbsMSPNIEN85NUmzI3byuY=",
         "ref": "refs/heads/main",
-        "rev": "e3bf430b3efe05ca72cb675c7c81951aac986c7d",
-        "revCount": 3,
+        "rev": "cc63359732d982858c723203abae71c2c26d6832",
+        "revCount": 6,
         "type": "git",
         "url": "https://git.tryp.io/tek/sqel"
       },

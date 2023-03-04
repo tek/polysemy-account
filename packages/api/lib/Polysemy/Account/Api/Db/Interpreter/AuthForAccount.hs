@@ -1,16 +1,14 @@
 -- | Description: PostgreSQL interpreters for the query for auth info by account ID
-module Polysemy.Account.Db.Interpreter.AuthForAccount where
+module Polysemy.Account.Api.Db.Interpreter.AuthForAccount where
 
 import Data.UUID (UUID)
-import Polysemy.Db (DbError)
-import Polysemy.Db (Query)
-import Polysemy.Hasql (DbTable)
-import Polysemy.Hasql (interpretQueryDd)
+import Polysemy.Db (DbError, Query)
+import Polysemy.Hasql (DbTable, interpretQueryDd)
 import Sqel (Uuid, prim, prod)
 
+import Polysemy.Account.Api.Db.Dd (accountAuth)
 import Polysemy.Account.Data.AccountAuth (AccountAuth)
 import Polysemy.Account.Data.AuthForAccount (AuthForAccount)
-import Polysemy.Account.Db.Dd (accountAuth)
 
 -- | Interpret @'Query' 'AuthForAccount'@ with [Polysemy.Hasql]("Polysemy.Hasql").
 interpretQueryAuthForAccountDb ::

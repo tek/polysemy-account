@@ -14,8 +14,8 @@ import Polysemy.Account.Data.Account (Account (Account))
 import Polysemy.Account.Data.AccountByName (AccountByName (AccountByName))
 import Polysemy.Account.Data.AccountStatus (AccountStatus (Active))
 import Polysemy.Account.Data.Privilege (Privilege (Api, Web))
-import qualified Polysemy.Account.Db.Dd as Dd
-import Polysemy.Account.Db.Interpreter.AccountByName (interpretQueryAccountPByNameDb)
+import qualified Polysemy.Account.Api.Db.Dd as Dd
+import Polysemy.Account.Api.Db.Interpreter.AccountByName (interpretQueryAccountPByNameDb)
 
 test_accountByName :: UnitTest
 test_accountByName =

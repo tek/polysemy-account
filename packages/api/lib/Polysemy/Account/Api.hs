@@ -26,7 +26,9 @@ module Polysemy.Account.Api (
   interpretAccountAuthStore,
   interpretAccountTable,
   interpretAccountAuthTable,
+
   interpretQueryAccountByNameDb,
+  interpretQueryAccountPByNameDb,
   interpretQueryAuthForAccountDb,
 
   -- * Servant
@@ -53,15 +55,16 @@ module Polysemy.Account.Api (
   adminOnly2_,
 ) where
 
-import Polysemy.Account.Api.Effect.Jwt (GenJwk, Jwt, genJwk, key, makeToken, settings)
-import Polysemy.Account.Api.Interpreter.Accounts (
+import Polysemy.Account.Api.Db.Interpreter.AccountByName (interpretQueryAccountByNameDb, interpretQueryAccountPByNameDb)
+import Polysemy.Account.Api.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)
+import Polysemy.Account.Api.Db.Interpreter.Store (
   interpretAccountAuthStore,
   interpretAccountAuthTable,
   interpretAccountStore,
   interpretAccountTable,
-  interpretAccountsDb,
-  interpretAccountsPDb,
   )
+import Polysemy.Account.Api.Effect.Jwt (GenJwk, Jwt, genJwk, key, makeToken, settings)
+import Polysemy.Account.Api.Interpreter.Accounts (interpretAccountsDb, interpretAccountsPDb)
 import Polysemy.Account.Api.Interpreter.Authorize (interpretAuthorizeP, interpretAuthorizeWith)
 import Polysemy.Account.Api.Interpreter.Jwt (
   interpretGenJwk,
@@ -90,5 +93,3 @@ import Polysemy.Account.Api.Server.AuthEndpoint (
   adminOnly_,
   authorizeEndpoint,
   )
-import Polysemy.Account.Db.Interpreter.AccountByName (interpretQueryAccountByNameDb)
-import Polysemy.Account.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)

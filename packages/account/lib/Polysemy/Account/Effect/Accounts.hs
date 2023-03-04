@@ -11,7 +11,7 @@ import Polysemy.Account.Data.AccountName (AccountName)
 import Polysemy.Account.Data.AccountStatus (AccountStatus)
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount)
 import Polysemy.Account.Data.GeneratedPassword (GeneratedPassword)
-import Polysemy.Account.Data.Privilege (Privilege)
+import qualified Polysemy.Account.Data.Privilege as Privilege
 import Polysemy.Account.Data.RawPassword (RawPassword)
 
 -- | This effect provides common operations for account and password management.
@@ -52,5 +52,5 @@ data Accounts i p :: Effect where
 
 makeSem ''Accounts
 
--- | Convenience alias for 'Accounts' using the default 'Privilege' type.
-type AccountsP i = Accounts i [Privilege]
+-- | Convenience alias for 'Accounts' using the default 'Privilege.Privileges' type.
+type AccountsP i = Accounts i Privilege.Privileges

@@ -1,18 +1,16 @@
 -- | Description: PostgreSQL interpreters for the query for an account by name
-module Polysemy.Account.Db.Interpreter.AccountByName where
+module Polysemy.Account.Api.Db.Interpreter.AccountByName where
 
 import Data.UUID (UUID)
-import Polysemy.Db (DbError)
-import Polysemy.Db (InitDbError)
+import Polysemy.Db (DbError, InitDbError)
 import Polysemy.Db.Ext (Query (..))
-import Polysemy.Hasql (interpretQueryDd)
-import Polysemy.Hasql (DbTable)
+import Polysemy.Hasql (DbTable, interpretQueryDd)
 import Sqel (CheckedProjection, Dd, FullCodec, Uuid, primNewtype, prod)
 import Sqel.Ext (Column, ReifyCodec, ReifyDd)
 
+import Polysemy.Account.Api.Db.Dd (DdAccount, account, accountP)
 import Polysemy.Account.Data.Account (Account, AccountP)
 import Polysemy.Account.Data.AccountByName (AccountByName)
-import Polysemy.Account.Db.Dd (DdAccount, account, accountP)
 
 -- | Interpret @'Query' 'AccountByName'@ with [Polysemy.Hasql]("Polysemy.Hasql").
 interpretQueryAccountByNameDb ::

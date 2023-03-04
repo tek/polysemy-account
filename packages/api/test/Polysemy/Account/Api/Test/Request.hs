@@ -22,7 +22,6 @@ import Sqel (Uid)
 import Zeugma (TestStack, resumeTest, runTestFrozen)
 
 import Polysemy.Account.Accounts (register)
-import Polysemy.Account.Effect.Authorize (Authorize)
 import qualified Polysemy.Account.Api.Effect.Jwt as Jwt
 import Polysemy.Account.Api.Effect.Jwt (Jwt)
 import Polysemy.Account.Api.Interpreter.Authorize (interpretAuthorizeP)
@@ -39,10 +38,11 @@ import qualified Polysemy.Account.Data.AccountStatus as AccountStatus
 import Polysemy.Account.Data.AccountsError (AccountsError)
 import Polysemy.Account.Data.AuthToken (AuthToken (AuthToken))
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (AuthedAccount))
-import Polysemy.Account.Data.Privilege (Privilege (Admin, Web))
+import Polysemy.Account.Data.Privilege (Privilege (Admin, Web), Privileges, RequiredPrivileges)
 import Polysemy.Account.Data.RawPassword (rawPassword)
 import qualified Polysemy.Account.Effect.Accounts as Accounts
 import Polysemy.Account.Effect.Accounts (Accounts)
+import Polysemy.Account.Effect.Authorize (Authorize)
 import Polysemy.Account.Interpreter.Accounts (interpretAccountsState)
 
 type ServerCtx (api :: Type) context =
@@ -111,13 +111,13 @@ reqJson :: Method -> Text -> Headers -> LByteString -> SRequest
 reqJson method path headers body =
   SRequest (req path (jsonType : headers)) { requestMethod = methodUpper method } body
 
-defaultAccount :: AuthedAccount Int [Privilege]
+defaultAccount :: AuthedAccount Int Privileges
 defaultAccount =
   AuthedAccount 1 1 "user" AccountStatus.Active [Web]
 
 run ::
   ∀ (api :: Type) ctx r .
-  Member (Jwt (AuthedAccount Int [Privilege]) !! ()) r =>
+  Member (Jwt (AuthedAccount Int Privileges) !! ()) r =>
   Server api (AuthContext ++ ctx) r =>
   Context ctx ->
   TestServer api r ->
@@ -130,9 +130,9 @@ run ctx srv method path headers body =
   runSessionSemJwtCtx @api ctx srv (srequest (reqJson method path headers body))
 
 makeAccount ::
-  Members [Accounts Int [Privilege] !! AccountsError, Jwt (AuthedAccount Int [Privilege]) !! (), Error TestError] r =>
+  Members [Accounts Int Privileges !! AccountsError, Jwt (AuthedAccount Int Privileges) !! (), Error TestError] r =>
   AccountCredentials ->
-  [Privilege] ->
+  Privileges ->
   Sem r (Text, (ByteString, ByteString))
 makeAccount creds privs =
   resumeTest @AccountsError do
@@ -145,7 +145,7 @@ makeAccount creds privs =
 
 interpretTestClientCtx ::
   ∀ (api :: Type) ctx r .
-  Members [Accounts Int [Privilege] !! AccountsError, Jwt (AuthedAccount Int [Privilege]) !! (), Error TestError] r =>
+  Members [Accounts Int Privileges !! AccountsError, Jwt (AuthedAccount Int Privileges) !! (), Error TestError] r =>
   Server api (AuthContext ++ ctx) r =>
   Context ctx ->
   TestServer api r ->
@@ -161,7 +161,7 @@ interpretTestClientCtx ctx server =
 
 interpretTestClient ::
   ∀ (api :: Type) r .
-  Members [Accounts Int [Privilege] !! AccountsError, Jwt (AuthedAccount Int [Privilege]) !! (), Error TestError] r =>
+  Members [Accounts Int Privileges !! AccountsError, Jwt (AuthedAccount Int Privileges) !! (), Error TestError] r =>
   Server api AuthContext r =>
   TestServer api r ->
   InterpreterFor TestClient r
@@ -170,18 +170,18 @@ interpretTestClient =
 
 type TestEffects =
   [
-    Authorize Int [Privilege] [Privilege],
-    Accounts Int [Privilege] !! AccountsError,
+    Authorize Int RequiredPrivileges Privileges,
+    Accounts Int Privileges !! AccountsError,
     Stop ServerError,
-    Jwt (AuthedAccount Int [Privilege]) !! (),
+    Jwt (AuthedAccount Int Privileges) !! (),
     Error Text
   ]
 
 interpretAccounts ::
   Members [Log, Error TestError, Embed IO] r =>
-  [Uid Int (Account [Privilege])] ->
+  [Uid Int (Account Privileges)] ->
   [Uid Int (AccountAuth Int)] ->
-  InterpreterFor (Accounts Int [Privilege] !! AccountsError) r
+  InterpreterFor (Accounts Int Privileges !! AccountsError) r
 interpretAccounts accounts auths =
   mapError TestError .
   interpretIdNumFrom 3 .
@@ -190,7 +190,7 @@ interpretAccounts accounts auths =
 
 runServer ::
   Members [Error TestError, Stop Text, Log, Resource, Async, Race, Embed IO] r =>
-  [Uid Int (Account [Privilege])] ->
+  [Uid Int (Account Privileges)] ->
   [Uid Int (AccountAuth Int)] ->
   InterpretersFor TestEffects r
 runServer accounts auths =
@@ -204,7 +204,7 @@ runApiTestCtx ::
   ∀ (api :: Type) ctx .
   ServerCtx api (AuthContext ++ ctx) =>
   Context ctx ->
-  [Uid Int (Account [Privilege])] ->
+  [Uid Int (Account Privileges)] ->
   [Uid Int (AccountAuth Int)] ->
   TestServer api (TestEffects ++ TestStack) ->
   Sem (TestClient : TestEffects ++ TestStack) () ->
@@ -217,7 +217,7 @@ runApiTestCtx ctx accounts auths server =
 runApiTest ::
   ∀ (api :: Type) .
   ServerCtx api AuthContext =>
-  [Uid Int (Account [Privilege])] ->
+  [Uid Int (Account Privileges)] ->
   [Uid Int (AccountAuth Int)] ->
   TestServer api (TestEffects ++ TestStack) ->
   Sem (TestClient : TestEffects ++ TestStack) () ->

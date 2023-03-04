@@ -8,22 +8,22 @@ import qualified Log
 import Servant (ServerError)
 import Servant.Auth.Server (AuthResult (Authenticated))
 
-import Polysemy.Account.Effect.Authorize (Authorize, authorize)
+import Polysemy.Account.Api.Server.Error (internal, unauthorized)
 import qualified Polysemy.Account.Data.AccountStatus as AccountStatus
 import Polysemy.Account.Data.AccountsError (AccountsError (Client, Internal))
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (AuthedAccount))
 import qualified Polysemy.Account.Data.Privilege as Privilege
-import Polysemy.Account.Data.Privilege (Privilege)
+import Polysemy.Account.Data.Privilege (RequiredPrivileges)
 import qualified Polysemy.Account.Effect.Accounts as Accounts
 import Polysemy.Account.Effect.Accounts (Accounts)
-import Polysemy.Account.Api.Server.Error (unauthorized, internal)
+import Polysemy.Account.Effect.Authorize (Authorize, authorize)
 
 -- | Basic values for describing the requirements of an endpoint for either "any user" or "admin".
 class AuthEndpointParam param where
   authEndpointUser :: param
   authEndpointAdmin :: param
 
-instance AuthEndpointParam [Privilege] where
+instance AuthEndpointParam RequiredPrivileges where
   authEndpointUser = []
   authEndpointAdmin = [Privilege.Admin]
 

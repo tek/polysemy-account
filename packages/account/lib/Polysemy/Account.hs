@@ -1,6 +1,7 @@
 -- | Description: Account management with Servant and Polysemy
 module Polysemy.Account (
-  -- * Effects
+  -- * Accounts
+  -- ** Effects
   Accounts,
   AccountsP,
   authenticate,
@@ -17,44 +18,17 @@ module Polysemy.Account (
   all,
   allAuths,
 
-  Password,
-  hash,
-  check,
-  generate,
-
-  Authorize (Authorize),
-  AuthorizeP,
-  authorize,
-
-  AccountByName (AccountByName),
-  AuthForAccount (AuthForAccount),
-
-  -- * Interpreters
+  -- ** Interpreters
   interpretAccounts,
   interpretAccountsState,
-
-  interpretPassword,
-  interpretPasswordId,
-
   interpretAccountByNameState,
   interpretAuthForAccountState,
 
-  -- * Servant
-  Authed,
-  AuthedP,
-  AccountApi,
-  AccountApiP,
-  AuthApi,
-  AuthApiP,
-
-  -- * Misc combinators
-  register,
-  login,
-  unlockAccountName,
-
-  -- * Data types
+  -- ** Data types
   Account (..),
+  AccountP,
   AuthedAccount (..),
+  AuthedAccountP,
   AccountAuth (..),
   AccountsConfig (..),
   AccountsConfigP,
@@ -62,19 +36,61 @@ module Polysemy.Account (
   AccountsClientError (..),
   AccountCredentials (..),
   AccountName (..),
+  AccountStatus (..),
   AccountAuthDescription (..),
+
+  -- ** Privileges
+  Privilege (..),
+  Privileges (..),
+  RequiredPrivileges (..),
+  satisfiesPrivilege,
+  satisfiesPrivileges,
+  unsatisfiedPrivileges,
+
+  -- * Passwords
+  -- ** Effects
+  Password,
+  hash,
+  check,
+  generate,
+
+  -- * Data types
   RawPassword,
   rawPassword,
   GeneratedPassword (..),
   HashedPassword (..),
-  AccountStatus (..),
-  Privilege (..),
-  AccountP,
-  AuthedAccountP,
+
+  -- ** Interpreters
+  interpretPassword,
+  interpretPasswordId,
+
+  -- * Servant auth
+  -- ** Effects
+  Authorize (Authorize),
+  AuthorizeP,
+  authorize,
+
+  AccountByName (AccountByName),
+  AuthForAccount (AuthForAccount),
+
+  -- ** API
+  Authed,
+  AuthedP,
+  AccountApi,
+  AccountApiP,
+  AuthApi,
+  AuthApiP,
+
+  -- ** Data types
   AuthToken (..),
   Port (Port),
   AuthQuery,
   AccountQuery,
+
+  -- * Convenience actions
+  register,
+  login,
+  unlockAccountName,
 ) where
 
 import Prelude hiding (all)
@@ -96,7 +112,14 @@ import Polysemy.Account.Data.AuthedAccount (AuthedAccount (..), AuthedAccountP)
 import Polysemy.Account.Data.GeneratedPassword (GeneratedPassword (..))
 import Polysemy.Account.Data.HashedPassword (HashedPassword (..))
 import Polysemy.Account.Data.Port (Port (..))
-import Polysemy.Account.Data.Privilege (Privilege (..))
+import Polysemy.Account.Data.Privilege (
+  Privilege (..),
+  Privileges (..),
+  RequiredPrivileges (..),
+  satisfiesPrivilege,
+  satisfiesPrivileges,
+  unsatisfiedPrivileges,
+  )
 import Polysemy.Account.Data.RawPassword (RawPassword (..), rawPassword)
 import Polysemy.Account.Effect.Accounts (
   Accounts,

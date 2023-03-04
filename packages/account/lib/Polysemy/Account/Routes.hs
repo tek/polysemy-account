@@ -9,7 +9,7 @@ import Polysemy.Account.Data.AccountCredentials (AccountCredentials)
 import Polysemy.Account.Data.AuthToken (AuthToken)
 import Polysemy.Account.Data.Authed (Authed)
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount)
-import Polysemy.Account.Data.Privilege (Privilege)
+import Polysemy.Account.Data.Privilege (Privileges)
 
 -- | An API allowing users to log in, register accounts, and authenticate with a JWT to obtain their account
 -- information.
@@ -23,7 +23,7 @@ type AuthApi i p =
   )
 
 -- | Convenience alias for using the default privilege type with 'AuthApi'.
-type AuthApiP i = AuthApi i [Privilege]
+type AuthApiP i = AuthApi i Privileges
 
 -- | An internal API for accessing accounts.
 type AccountApi i p =
@@ -38,4 +38,4 @@ type AccountApi i p =
   )
 
 -- | Convenience alias for using the default privilege type with 'AccountApi'.
-type AccountApiP i = AccountApi i [Privilege]
+type AccountApiP i = AccountApi i Privileges

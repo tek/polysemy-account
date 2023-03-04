@@ -5,7 +5,7 @@ module Polysemy.Account.Data.AuthedAccount where
 
 import Polysemy.Account.Data.AccountName (AccountName)
 import Polysemy.Account.Data.AccountStatus (AccountStatus)
-import Polysemy.Account.Data.Privilege (Privilege)
+import Polysemy.Account.Data.Privilege (Privileges)
 
 -- | An account an the ID of the password used to authenticate it.
 data AuthedAccount i p =
@@ -21,4 +21,4 @@ data AuthedAccount i p =
 json ''AuthedAccount
 
 -- | Convenience alias for using the default privilege type with 'AuthedAccount'.
-type AuthedAccountP i = AuthedAccount i [Privilege]
+type AuthedAccountP i = AuthedAccount i Privileges

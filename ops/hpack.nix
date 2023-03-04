@@ -96,6 +96,7 @@ in {
     library = {
       dependencies = [
         "aeson ^>= 2.0"
+        "chronos ^>= 1.1"
         "exon ^>= 1.4"
         "fast-logger ^>= 3.1"
         "jose ^>= 0.9"

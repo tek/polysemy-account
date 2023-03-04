@@ -3,11 +3,11 @@
 -- | Description: Config data type for the effect 'Polysemy.Account.Accounts'.
 module Polysemy.Account.Data.AccountsConfig where
 
-import Polysemy.Account.Data.Privilege (Privilege)
+import Polysemy.Account.Data.Privilege (Privileges)
 
 -- | The configuration for the interpreter for 'Polysemy.Account.Accounts'.
 --
--- The defaults, when using 'Privilege', are:
+-- The defaults, when using 'Privileges', are:
 --
 -- - Length 20
 -- - Don't activate accounts right away
@@ -26,7 +26,7 @@ data AccountsConfig p =
 json ''AccountsConfig
 
 -- | Convenience alias for using the default privilege type with 'AccountsConfig'.
-type AccountsConfigP = AccountsConfig [Privilege]
+type AccountsConfigP = AccountsConfig Privileges
 
 instance Default p => Default (AccountsConfig p) where
   def = AccountsConfig {

@@ -22,6 +22,11 @@ extra-source-files:
 library
   exposed-modules:
       Polysemy.Account.Api
+      Polysemy.Account.Api.Db
+      Polysemy.Account.Api.Db.Dd
+      Polysemy.Account.Api.Db.Interpreter.AccountByName
+      Polysemy.Account.Api.Db.Interpreter.AuthForAccount
+      Polysemy.Account.Api.Db.Interpreter.Store
       Polysemy.Account.Api.Effect.Jwt
       Polysemy.Account.Api.Interpreter.Accounts
       Polysemy.Account.Api.Interpreter.Authorize
@@ -32,9 +37,6 @@ library
       Polysemy.Account.Api.Server.Auth
       Polysemy.Account.Api.Server.AuthEndpoint
       Polysemy.Account.Api.Server.Error
-      Polysemy.Account.Db.Dd
-      Polysemy.Account.Db.Interpreter.AccountByName
-      Polysemy.Account.Db.Interpreter.AuthForAccount
   reexported-modules:
       Polysemy.Account
   hs-source-dirs:
@@ -108,6 +110,7 @@ library
   build-depends:
       aeson ==2.0.*
     , base >=4.12 && <5
+    , chronos ==1.1.*
     , exon ==1.4.*
     , fast-logger ==3.1.*
     , jose ==0.9.*

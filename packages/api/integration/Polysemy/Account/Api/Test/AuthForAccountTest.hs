@@ -16,8 +16,8 @@ import Sqel.Query (checkQuery)
 
 import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
 import Polysemy.Account.Data.AuthForAccount (AuthForAccount (AuthForAccount))
-import qualified Polysemy.Account.Db.Dd as Dd
-import Polysemy.Account.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)
+import qualified Polysemy.Account.Api.Db.Dd as Dd
+import Polysemy.Account.Api.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)
 
 test_authForAccount :: UnitTest
 test_authForAccount =

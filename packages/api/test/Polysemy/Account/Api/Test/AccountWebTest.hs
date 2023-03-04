@@ -4,12 +4,10 @@ import qualified Data.Aeson as Aeson
 import Exon (exon)
 import Network.HTTP.Types (Status (Status))
 import Network.Wai.Test (SResponse (SResponse))
-import Polysemy.Db (Id)
-import Polysemy.Db (Query)
+import Polysemy.Db (Id, Query)
 import Polysemy.Test (UnitTest, assertRight, (===))
 import Sqel (Uid (Uid))
 
-import Polysemy.Account.Routes (AuthApiP)
 import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Server.Error (ClientError (ClientError))
 import Polysemy.Account.Api.Test.Data.Request (Method (Post))
@@ -20,11 +18,12 @@ import Polysemy.Account.Data.Account (Account (Account), AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
 import Polysemy.Account.Data.AccountByName (AccountByName)
 import Polysemy.Account.Data.AccountName (AccountName (AccountName))
-import Polysemy.Account.Data.HashedPassword (HashedPassword (HashedPassword))
 import qualified Polysemy.Account.Data.AccountStatus as AccountStatus
 import Polysemy.Account.Data.AuthForAccount (AuthForAccount)
+import Polysemy.Account.Data.HashedPassword (HashedPassword (HashedPassword))
 import Polysemy.Account.Data.Privilege (Privilege (Admin, Web))
 import Polysemy.Account.Effect.Accounts (AccountsP)
+import Polysemy.Account.Routes (AuthApiP)
 
 user1 :: Text
 user1 =
@@ -68,7 +67,7 @@ type Effects =
   ]
 
 -- server ::
---   Members [Jwt (AuthedAccount Int [Privilege]) !! (), Async, Race, Resource] r =>
+--   Members [Jwt (AuthedAccount Int Privileges) !! (), Async, Race, Resource] r =>
 --   Server (AuthApiP Int) [JWTSettings, CookieSettings] r =>
 --   TestServer (AuthApiP Int) r
 -- server =

@@ -3,10 +3,10 @@ module Polysemy.Account.Api.Interpreter.Authorize where
 
 import Exon (exon)
 
-import Polysemy.Account.Effect.Authorize (Authorize (Authorize))
 import qualified Polysemy.Account.Data.AuthedAccount as AuthedAccount
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (AuthedAccount))
-import Polysemy.Account.Data.Privilege (Privilege)
+import Polysemy.Account.Data.Privilege (unsatisfiedPrivileges)
+import Polysemy.Account.Effect.Authorize (Authorize (Authorize), AuthorizeP)
 
 -- | Interpret 'Authorize' using a monadic predicate.
 interpretAuthorizeWith ::
@@ -17,14 +17,14 @@ interpretAuthorizeWith check =
     Authorize required account ->
       check required account
 
--- | Interpret 'Authorize' using 'Privilege' for both parameter and privilege types.
+-- | Interpret 'Authorize' using 'Polysemy.Account.RequiredPrivileges' for the parameter and
+-- 'Polysemy.Account.Privileges' for the privilege type.
 --
--- Simply verify that all parameter privileges are present in the account.
+-- Simply verifies that all parameter privileges are present in the account.
 interpretAuthorizeP ::
-  InterpreterFor (Authorize i [Privilege] [Privilege]) r
+  InterpreterFor (AuthorizeP i) r
 interpretAuthorizeP =
   interpret \case
     Authorize required AuthedAccount {privileges} ->
-      pure $ case filter (not . flip elem privileges) required of
-        [] -> Nothing
-        missing -> Just [exon|Missing privileges: #{show missing}|]
+      pure $ unsatisfiedPrivileges required privileges <&> \ missing ->
+        [exon|Missing privileges: #{show missing}|]
