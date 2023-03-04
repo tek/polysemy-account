@@ -143,6 +143,7 @@ in {
       dependencies = [
         "case-insensitive"
         "exon"
+        "http-types"
         "polysemy-account"
         "polysemy-account-api"
         "polysemy-db"

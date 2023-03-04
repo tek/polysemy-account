@@ -2,16 +2,13 @@ module Polysemy.Account.Api.Test.AccountWebTest where
 
 import qualified Data.Aeson as Aeson
 import Exon (exon)
-import Network.HTTP.Types (Status (Status))
-import Network.Wai.Test (SResponse (SResponse))
 import Polysemy.Test (UnitTest, assertRight, (===))
 import Sqel (Uid (Uid))
 
 import Polysemy.Account.Api.Server.Auth (authServer)
 import Polysemy.Account.Api.Server.Error (ClientError (ClientError))
 import Polysemy.Account.Api.Test.Data.Request (Method (Post))
-import qualified Polysemy.Account.Api.Test.Effect.TestClient as TestClient
-import Polysemy.Account.Api.Test.Effect.TestClient (TestClientP)
+import Polysemy.Account.Api.Test.Effect.TestClient (Response (Response), TestClientP, rawRequest)
 import Polysemy.Account.Api.Test.Interpreter.TestClient (runApiTest)
 import Polysemy.Account.Data.Account (Account (Account), AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
@@ -61,14 +58,14 @@ post ::
   Member (TestClientP i) r =>
   Text ->
   LByteString ->
-  Sem r SResponse
+  Sem r Response
 post endpoint =
-  TestClient.request Post [exon|auth/#{endpoint}|] []
+  rawRequest Post [exon|auth/#{endpoint}|] []
 
 test_loginUser :: UnitTest
 test_loginUser =
   runApiTest @(AuthApiP Int) authServer accounts auths do
-    SResponse (Status code _) _ _ <- post "login" postAccountBody
+    Response code _ _ <- post "login" postAccountBody
     205 === code
 
 postFailAccountBody :: LByteString
@@ -78,7 +75,7 @@ postFailAccountBody =
 test_failLoginUser :: UnitTest
 test_failLoginUser =
   runApiTest @(AuthApiP Int) authServer accounts auths do
-    SResponse (Status code _) _ _ <- post "login" postFailAccountBody
+    Response code _ _ <- post "login" postFailAccountBody
     401 === code
 
 regBody :: LByteString
@@ -88,7 +85,7 @@ regBody =
 test_registerUser :: UnitTest
 test_registerUser =
   runApiTest @(AuthApiP Int) authServer accounts auths do
-    SResponse (Status code _) _ _ <- post "register" regBody
+    Response code _ _ <- post "register" regBody
     201 === code
 
 regFailBody :: LByteString
@@ -98,6 +95,6 @@ regFailBody =
 test_registerFailUser :: UnitTest
 test_registerFailUser =
   runApiTest @(AuthApiP Int) authServer accounts auths do
-    SResponse (Status code _) _ body <- post "register" regFailBody
+    Response code _ body <- post "register" regFailBody
     409 === code
     assertRight (ClientError "Multiple accounts with same name") (first toText (Aeson.eitherDecode body))

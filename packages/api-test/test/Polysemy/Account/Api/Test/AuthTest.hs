@@ -4,8 +4,6 @@ module Polysemy.Account.Api.Test.AuthTest where
 
 import qualified Data.Text as Text
 import Exon (exon)
-import Network.HTTP.Types (Status (Status))
-import Network.Wai.Test (SResponse (SResponse))
 import Polysemy.Test (UnitTest, evalMaybe, (===))
 import Servant (BasicAuthData, Get, JSON, (:<|>) ((:<|>)), (:>))
 import Servant.Auth.Server (
@@ -22,7 +20,7 @@ import Servant.Auth.Server (
 import "servant-server" Servant.Server (Context (EmptyContext, (:.)), ServerError, ServerT, err401)
 
 import Polysemy.Account.Api.Test.Data.Request (Method (Get))
-import qualified Polysemy.Account.Api.Test.Effect.TestClient as TestClient
+import Polysemy.Account.Api.Test.Effect.TestClient (Response (Response), rawRequest)
 import Polysemy.Account.Api.Test.Interpreter.TestClient (interpretTestServerAccounts, runTestP)
 import Polysemy.Account.Data.AuthToken (AuthToken (AuthToken))
 import Polysemy.Account.Data.Privilege (Privileges)
@@ -79,9 +77,9 @@ test_authApi :: UnitTest
 test_authApi =
   runTestP 1 $
   interpretTestServerAccounts @TestApi @_ @Int @Privileges (auth :. EmptyContext) server def [] [] do
-    SResponse (Status _ _) headers _ <- TestClient.request Get "first" [authHeader] ""
+    Response _ headers _ <- rawRequest Get "first" [authHeader] ""
     cookie <- evalMaybe (firstJust isJwtHeader headers)
-    SResponse (Status statusOk _) _ body <- TestClient.request Get "second" [jwtHeader cookie] ""
+    Response statusOk _ body <- rawRequest Get "second" [jwtHeader cookie] ""
     statusOk === 200
     body === "6"
   where

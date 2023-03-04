@@ -4,9 +4,15 @@ module Polysemy.Account.Api.Test (
   runApiTestLevel,
   interpretTestServerAccounts,
   interpretTestServer,
+  request,
+  requestWith,
+  requestWithId,
+  requestWithAuth,
+  Response (..),
+  Method (..),
   TestClient,
   TestClientP,
-  request,
+  rawRequest,
   makeToken,
   makeUser,
   interpretTestClient,
@@ -19,7 +25,15 @@ module Polysemy.Account.Api.Test (
   TestServerT,
 ) where
 
-import Polysemy.Account.Api.Test.Effect.TestClient (TestClient, TestClientP, makeToken, makeUser, request)
+import Polysemy.Account.Api.Test.Data.Request (Method (..))
+import Polysemy.Account.Api.Test.Effect.TestClient (
+  Response (..),
+  TestClient,
+  TestClientP,
+  makeToken,
+  makeUser,
+  rawRequest,
+  )
 import Polysemy.Account.Api.Test.Interpreter.TestClient (
   ApiTestStack,
   ServerCtx,
@@ -34,3 +48,4 @@ import Polysemy.Account.Api.Test.Interpreter.TestClient (
   runTestP,
   runTestPLevel,
   )
+import Polysemy.Account.Api.Test.Request (request, requestWith, requestWithAuth, requestWithId)

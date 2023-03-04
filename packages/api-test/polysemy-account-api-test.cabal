@@ -25,6 +25,7 @@ library
       Polysemy.Account.Api.Test.Data.Request
       Polysemy.Account.Api.Test.Effect.TestClient
       Polysemy.Account.Api.Test.Interpreter.TestClient
+      Polysemy.Account.Api.Test.Request
   hs-source-dirs:
       lib
   default-extensions:
@@ -97,6 +98,7 @@ library
       base >=4.12 && <5
     , case-insensitive
     , exon
+    , http-types
     , polysemy
     , polysemy-account
     , polysemy-account-api

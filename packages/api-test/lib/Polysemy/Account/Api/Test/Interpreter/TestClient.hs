@@ -7,12 +7,12 @@ import qualified Data.CaseInsensitive as CaseInsensitive
 import Exon.Quote (exon)
 import Lens.Micro.Extras (view)
 import Log (Severity (Error))
+import qualified Network.HTTP.Types.Status
 import Network.Wai (Request, requestHeaders, requestMethod)
 import qualified Network.Wai.Test as Wai
-import Network.Wai.Test (SRequest (SRequest), SResponse, Session, defaultRequest, setPath, srequest)
+import Network.Wai.Test (SRequest (SRequest), Session, defaultRequest, setPath, srequest)
 import Polysemy.Db (DbError, Id, interpretIdNumFrom)
 import Polysemy.Test (TestError (TestError), UnitTest)
-import Prelude hiding (get, put)
 import Servant (
   Context (EmptyContext, (:.)),
   DefaultErrorFormatters,
@@ -36,7 +36,7 @@ import Polysemy.Account.Api.Native (AuthContext)
 import Polysemy.Account.Api.NativeContext (runServerSem)
 import Polysemy.Account.Api.Test.Data.Request (Headers, Method, methodUpper)
 import qualified Polysemy.Account.Api.Test.Effect.TestClient as TestClient
-import Polysemy.Account.Api.Test.Effect.TestClient (TestClient)
+import Polysemy.Account.Api.Test.Effect.TestClient (Response (Response), TestClient)
 import Polysemy.Account.Data.Account (Account)
 import Polysemy.Account.Data.AccountAuth (AccountAuth)
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials)
@@ -136,9 +136,10 @@ run ::
   Text ->
   Headers ->
   LByteString ->
-  Sem r SResponse
-run ctx srv method path headers body =
-  runSessionJwtCtx @api ctx srv (srequest (reqJson method path headers body))
+  Sem r Response
+run ctx srv method path headers body = do
+  res <- runSessionJwtCtx @api ctx srv (srequest (reqJson method path headers body))
+  pure (Response res.simpleStatus.statusCode res.simpleHeaders res.simpleBody)
 
 makeToken ::
   ∀ i p r .
@@ -170,7 +171,7 @@ interpretTestClient ::
   InterpreterFor (TestClient i p) r
 interpretTestClient ctx server =
   interpret \case
-    TestClient.Request method path headers body ->
+    TestClient.RawRequest method path headers body ->
       run @api ctx server method path headers body
     TestClient.MakeToken acc ->
       makeToken acc
@@ -185,7 +186,7 @@ interpretTestServer ::
   ToJSON p =>
   ServerCtx api (AuthContext ++ ctx) =>
   Members [Accounts i p !! AccountsError, Reader (AccountsConfig p) !! DbError] r =>
-  Members [Id i, Error TestError, Log, Resource, Async, Race, Embed IO, Final IO] r =>
+  Members [Id i, Error TestError, Log, Embed IO, Final IO] r =>
   Context ctx ->
   TestServerT api (Jwt (AuthedAccount i p) !! () : r) ->
   InterpretersFor [TestClient i p, Jwt (AuthedAccount i p) !! ()] r
@@ -215,7 +216,7 @@ interpretTestServerAccounts ::
   ToJSON i =>
   ToJSON p =>
   ServerCtx api (AuthContext ++ ctx) =>
-  Members [Id i, Error TestError, Log, Resource, Async, Race, Embed IO, Final IO] r =>
+  Members [Id i, Error TestError, Log, Embed IO, Final IO] r =>
   Context ctx ->
   TestServerT api (TestEffects i p ++ r) ->
   AccountsConfig p ->
@@ -226,6 +227,10 @@ interpretTestServerAccounts ctx server conf accounts auths =
   interpretAccountsState conf accounts auths .
   resumeTest .
   interpretTestServer @api ctx server
+
+apiTest :: ()
+apiTest =
+  undefined
 
 -- | The stack used by the basic test runner.
 type ApiTestStack =
