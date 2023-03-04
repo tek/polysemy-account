@@ -26,12 +26,18 @@ module Polysemy.Account (
   AuthorizeP,
   authorize,
 
+  AccountByName (AccountByName),
+  AuthForAccount (AuthForAccount),
+
   -- * Interpreters
   interpretAccounts,
   interpretAccountsState,
 
   interpretPassword,
   interpretPasswordId,
+
+  interpretAccountByNameState,
+  interpretAuthForAccountState,
 
   -- * Servant
   Authed,
@@ -77,11 +83,13 @@ import Polysemy.Account.Accounts (login, register, unlockAccountName)
 import Polysemy.Account.Data.Account (Account (..), AccountP)
 import Polysemy.Account.Data.AccountAuth (AccountAuth (..))
 import Polysemy.Account.Data.AccountAuthDescription (AccountAuthDescription (..))
+import Polysemy.Account.Data.AccountByName (AccountByName (AccountByName))
 import Polysemy.Account.Data.AccountCredentials (AccountCredentials (..))
 import Polysemy.Account.Data.AccountName (AccountName (..))
 import Polysemy.Account.Data.AccountStatus (AccountStatus (..))
 import Polysemy.Account.Data.AccountsConfig (AccountsConfig (..), AccountsConfigP)
 import Polysemy.Account.Data.AccountsError (AccountsClientError (..), AccountsError (..))
+import Polysemy.Account.Data.AuthForAccount (AuthForAccount (AuthForAccount))
 import Polysemy.Account.Data.AuthToken (AuthToken (..))
 import Polysemy.Account.Data.Authed (Authed, AuthedP)
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount (..), AuthedAccountP)
@@ -109,8 +117,8 @@ import Polysemy.Account.Effect.Accounts (
   )
 import Polysemy.Account.Effect.Authorize (Authorize (Authorize), AuthorizeP, authorize)
 import Polysemy.Account.Effect.Password (Password, check, generate, hash)
-import Polysemy.Account.Interpreter.AccountByName (AccountQuery)
+import Polysemy.Account.Interpreter.AccountByName (AccountQuery, interpretAccountByNameState)
 import Polysemy.Account.Interpreter.Accounts (interpretAccounts, interpretAccountsState)
-import Polysemy.Account.Interpreter.AuthForAccount (AuthQuery)
+import Polysemy.Account.Interpreter.AuthForAccount (AuthQuery, interpretAuthForAccountState)
 import Polysemy.Account.Interpreter.Password (interpretPassword, interpretPasswordId)
 import Polysemy.Account.Routes (AccountApi, AccountApiP, AuthApi, AuthApiP)

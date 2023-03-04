@@ -26,6 +26,8 @@ module Polysemy.Account.Api (
   interpretAccountAuthStore,
   interpretAccountTable,
   interpretAccountAuthTable,
+  interpretQueryAccountByNameDb,
+  interpretQueryAuthForAccountDb,
 
   -- * Servant
   accountServer,
@@ -88,3 +90,5 @@ import Polysemy.Account.Api.Server.AuthEndpoint (
   adminOnly_,
   authorizeEndpoint,
   )
+import Polysemy.Account.Db.Interpreter.AccountByName (interpretQueryAccountByNameDb)
+import Polysemy.Account.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)
