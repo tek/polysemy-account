@@ -3996,11 +3996,11 @@
         "sqel": "sqel"
       },
       "locked": {
-        "lastModified": 1678399226,
-        "narHash": "sha256-dW+SGEo0QY/1/LjUx3AHZBCXlY4/62VfLFzF1dTsGZw=",
+        "lastModified": 1678476497,
+        "narHash": "sha256-QAHDag4o2Xx1qFDwc7FD5RDaJC2B5tdH4dUo3D633so=",
         "ref": "refs/heads/main",
-        "rev": "59dc28600bce5be6d75a938bf7b922e75f4651c0",
-        "revCount": 337,
+        "rev": "b77ce709d4b90894aa159dd57f5a860814beda05",
+        "revCount": 338,
         "type": "git",
         "url": "https://git.tryp.io/tek/polysemy-hasql"
       },
@@ -4072,11 +4072,11 @@
         "incipit": "incipit"
       },
       "locked": {
-        "lastModified": 1677709117,
-        "narHash": "sha256-s0SepwTlrZbEu9ZX5W11MOXkdxkiTDWi4tHMuivnFgk=",
+        "lastModified": 1678476473,
+        "narHash": "sha256-euii7x+r/8AHBesngrvHdsI4vpLF1xPMz6hio+dupsY=",
         "ref": "refs/heads/main",
-        "rev": "194c5a1a6c70c1ee298d38d5afb7467e762b6f75",
-        "revCount": 29,
+        "rev": "db8015e78ba3baecbd790b1cc86fd912616f4caf",
+        "revCount": 30,
         "type": "git",
         "url": "https://git.tryp.io/tek/prelate"
       },
