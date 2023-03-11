@@ -2,26 +2,23 @@ module Polysemy.Account.Api.Test.AuthForAccountTest where
 
 import Data.UUID (UUID)
 import qualified Polysemy.Db as Db
-import Polysemy.Db (Query)
-import Polysemy.Db (DbError)
+import Polysemy.Db (DbError, QStore, Query)
 import qualified Polysemy.Db.Effect.Store as Store
-import Polysemy.Db (QStore)
-import Polysemy.Hasql (interpretTable)
-import Polysemy.Hasql (interpretStoreDb)
+import Polysemy.Hasql (interpretStoreDb, interpretTable)
 import Polysemy.Hasql.Test.Run (integrationTest)
 import Polysemy.Test (UnitTest, assertEq)
 import Sqel (Uid (Uid), Uuid, primAs)
 import qualified Sqel.Data.Uid as Uid
 import Sqel.Query (checkQuery)
 
-import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
-import Polysemy.Account.Data.AuthForAccount (AuthForAccount (AuthForAccount))
 import qualified Polysemy.Account.Api.Db.Dd as Dd
 import Polysemy.Account.Api.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)
+import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
+import Polysemy.Account.Data.AuthForAccount (AuthForAccount (AuthForAccount))
 
 test_authForAccount :: UnitTest
 test_authForAccount =
-  integrationTest "polysemy_account_db" "polysemy-account" $
+  integrationTest "polysemy_account" $
   interpretTable ts $
   interpretStoreDb ts (checkQuery (primAs @"id") Dd.accountAuth) $
   interpretQueryAuthForAccountDb do

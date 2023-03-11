@@ -3,7 +3,7 @@ module Polysemy.Account.Api.Test.JwkTest where
 import qualified Data.Text as Text
 import Polysemy.Db (DbError)
 import Polysemy.Hasql (Database)
-import Polysemy.Hasql.Migration (unMigrateSem)
+import Polysemy.Hasql.Data.MigrateSem (unMigrateSem)
 import Polysemy.Hasql.Test.Run (integrationTest)
 import Polysemy.Test (UnitTest, assert, assertEq)
 import Servant.Auth.JWT (ToJWT)
@@ -26,7 +26,7 @@ instance ToJWT Tok where
 
 test_jwk :: UnitTest
 test_jwk =
-  integrationTest "polysemy_account_db" "polysemy-account" $
+  integrationTest "polysemy_account" $
   interpretJwtDb @Tok do
     assert . (> 20) . Text.length . coerce =<< restop @DbError (Jwt.makeToken (Tok "tok"))
     assertEq 1 . length . unDbCols =<< subsume (restop @DbError @Database (unMigrateSem (tableColumns "jwk")))

@@ -16,23 +16,22 @@
 
     vm = {
       enable = true;
-      name = "polysemy-account";
+      name = "polysemy_account";
       port = 14000;
       postgres = {
         enable = true;
-        name = "polysemy-account";
+        name = "polysemy_account";
         log = true;
         creds = {
-          user = "polysemy-account";
-          password = "polysemy-account";
+          user = "polysemy_account";
+          password = "polysemy_account";
         };
       };
     };
 
     env = {
-      polysemy_account_db_test_host = "localhost";
-      polysemy_account_db_test_port = vm.port;
-      polysemy_account_db_test_name = vm.postgres.name;
+      polysemy_account_test_host = "localhost";
+      polysemy_account_test_port = vm.port;
     };
 
   in hix.lib.pro ({ config, lib, ... }: {

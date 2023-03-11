@@ -10,16 +10,16 @@ import Sqel (Uid (Uid), primAs)
 import qualified Sqel.Data.Uid as Uid
 import Sqel.Query (checkQuery)
 
+import qualified Polysemy.Account.Api.Db.Dd as Dd
+import Polysemy.Account.Api.Db.Interpreter.AccountByName (interpretQueryAccountPByNameDb)
 import Polysemy.Account.Data.Account (Account (Account))
 import Polysemy.Account.Data.AccountByName (AccountByName (AccountByName))
 import Polysemy.Account.Data.AccountStatus (AccountStatus (Active))
 import Polysemy.Account.Data.Privilege (Privilege (Api, Web))
-import qualified Polysemy.Account.Api.Db.Dd as Dd
-import Polysemy.Account.Api.Db.Interpreter.AccountByName (interpretQueryAccountPByNameDb)
 
 test_accountByName :: UnitTest
 test_accountByName =
-  integrationTest "polysemy_account_db" "polysemy-account" $
+  integrationTest "polysemy_account" $
   interpretTable ts $
   interpretStoreDb ts (checkQuery (primAs @"id") Dd.accountP) $
   interpretQueryAccountPByNameDb do
