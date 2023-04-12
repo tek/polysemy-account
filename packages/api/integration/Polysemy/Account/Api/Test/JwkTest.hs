@@ -25,8 +25,8 @@ instance FromJWT Tok where
 instance ToJWT Tok where
 
 test_jwk :: UnitTest
-test_jwk =
+test_jwk = do
   integrationTest "polysemy_account" $
-  interpretJwtDb @Tok do
-    assert . (> 20) . Text.length . coerce =<< restop @DbError (Jwt.makeToken (Tok "tok"))
-    assertEq 1 . length . unDbCols =<< subsume (restop @DbError @Database (unMigrateSem (tableColumns "jwk")))
+    interpretJwtDb @Tok do
+      assert . (> 20) . Text.length . coerce =<< restop @DbError (Jwt.makeToken (Tok "tok"))
+      assertEq 1 . length . (.unDbCols) =<< subsume (restop @DbError @Database (unMigrateSem (tableColumns "jwk")))
