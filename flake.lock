@@ -616,11 +616,11 @@
         "thax": "thax"
       },
       "locked": {
-        "lastModified": 1681298289,
-        "narHash": "sha256-WdXIUHoWWTVpUh/UZpV80Ukl+MkIQpmeuvAiyShvD/M=",
+        "lastModified": 1681302733,
+        "narHash": "sha256-Vo2GlV7/6rIhIeltzq3ivyyGwdfpM6WIV3qrBQaD2WU=",
         "ref": "refs/heads/main",
-        "rev": "637eb4c9d2c7060dfa252fc0d494b1a928658244",
-        "revCount": 386,
+        "rev": "028bed6681c0ce703a952614411cadb10817568e",
+        "revCount": 390,
         "type": "git",
         "url": "https://git.tryp.io/tek/hix"
       },
@@ -1520,11 +1520,11 @@
         "sqel": "sqel"
       },
       "locked": {
-        "lastModified": 1681297370,
-        "narHash": "sha256-eDU2+TuzO/K6R2o37ceqFSfskw0whP2tVHusm/NHwk8=",
+        "lastModified": 1681305707,
+        "narHash": "sha256-7792kS3vhAKN/cMQBtjck6jow5QVaJTW5AQRliEoX1g=",
         "ref": "refs/heads/main",
-        "rev": "027c6620ccbcae1a56cf3043cf2ca5f83c6d18ab",
-        "revCount": 346,
+        "rev": "3642d0fef35ed5b3dd9d8a005eb3dc7479833418",
+        "revCount": 348,
         "type": "git",
         "url": "https://git.tryp.io/tek/polysemy-hasql"
       },

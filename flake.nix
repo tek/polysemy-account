@@ -36,6 +36,7 @@
         git = "https://git.tryp.io/tek/polysemy-account";
         homepage = "https://git.tryp.io/tek/polysemy-account";
         bug-reports = "https://github.com/tek/polysemy-account/issues";
+        extra-source-files = ["changelog.md" "readme.md"];
       };
       dependencies = ["polysemy" "polysemy-plugin"];
       ghc-options = ["-fplugin=Polysemy.Plugin" "-Wno-partial-type-signatures"];
@@ -86,7 +87,7 @@
             "warp ^>= 3.3"
             config.packages.polysemy-account.dep.minor
           ];
-          component.reexported-modules = ["Polysemy.Account"];
+          reexported-modules = ["Polysemy.Account"];
         };
         test = {
           enable = true;
