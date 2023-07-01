@@ -11,18 +11,14 @@ import Polysemy.Db (DbError, InitDbError)
 import Polysemy.Hasql (Database, interpretAtomicStateDb, interpretTable)
 import Servant.Auth.JWT (ToJWT)
 import Servant.Auth.Server (FromJWT, JWTSettings, defaultJWTSettings, makeJWT)
-import Sqel (tableName)
-import Sqel.Data.TableSchema (TableSchema)
-import Sqel.Names (named)
-import Sqel.PgType (tableSchema)
-import qualified Sqel.Prim as Sqel
+import Sqel (Json, Name, Sqel, Table, sqel)
 
 import Polysemy.Account.Api.Effect.Jwt (GenJwk (GenJwk), Jwt (..), genJwk)
 import Polysemy.Account.Data.AuthToken (AuthToken (AuthToken))
 import Polysemy.Account.Data.AuthedAccount (AuthedAccount)
 
-instance (FromJSON i, FromJSON p) => FromJWT (AuthedAccount i p) where
-instance (ToJSON i, ToJSON p) => ToJWT (AuthedAccount i p) where
+instance (FromJSON i, FromJSON p) => FromJWT (AuthedAccount i p)
+instance (ToJSON i, ToJSON p) => ToJWT (AuthedAccount i p)
 
 generateKey ::
   Member (Embed IO) r =>
@@ -124,6 +120,11 @@ interpretJwtPersistent =
       sett <- restop settingsPersistent
       authToken =<< embed (makeJWT a sett Nothing)
 
+type Table_Jwk = Table "jwk" JWK (Name "payload" Json)
+
+table_Jwk :: Sqel Table_Jwk
+table_Jwk = sqel
+
 -- | Interpret 'Jwt' using 'interpretJwtPersistent' and interpret 'AtomicState' as a PostgreSQL table using
 -- @polysemy-hasql@, generating the JWK when it is not found in the database.
 interpretJwtDb ::
@@ -133,10 +134,7 @@ interpretJwtDb ::
   InterpreterFor (Jwt a !! DbError) r
 interpretJwtDb =
   interpretGenJwk .
-  interpretTable ts .
-  interpretAtomicStateDb ts genJwk .
+  interpretTable table_Jwk .
+  interpretAtomicStateDb table_Jwk genJwk .
   interpretJwtPersistent .
   insertAt @1
-  where
-    ts :: TableSchema JWK
-    ts = tableSchema (tableName "jwk" (named @"payload" Sqel.json))

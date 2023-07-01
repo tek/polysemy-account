@@ -7,11 +7,10 @@ import qualified Polysemy.Db.Effect.Store as Store
 import Polysemy.Hasql (interpretStoreDb, interpretTable)
 import Polysemy.Hasql.Test.Run (integrationTest)
 import Polysemy.Test (UnitTest, assertEq)
-import Sqel (Uid (Uid), Uuid, primAs)
+import Sqel (Uid (Uid), Uuid, query_UUID)
 import qualified Sqel.Data.Uid as Uid
-import Sqel.Query (checkQuery)
 
-import qualified Polysemy.Account.Api.Db.Dd as Dd
+import Polysemy.Account.Api.Db.Dd (table_AccountAuth)
 import Polysemy.Account.Api.Db.Interpreter.AuthForAccount (interpretQueryAuthForAccountDb)
 import Polysemy.Account.Data.AccountAuth (AccountAuth (AccountAuth))
 import Polysemy.Account.Data.AuthForAccount (AuthForAccount (AuthForAccount))
@@ -19,8 +18,8 @@ import Polysemy.Account.Data.AuthForAccount (AuthForAccount (AuthForAccount))
 test_authForAccount :: UnitTest
 test_authForAccount =
   integrationTest "polysemy_account" $
-  interpretTable ts $
-  interpretStoreDb ts (checkQuery (primAs @"id") Dd.accountAuth) $
+  interpretTable table_AccountAuth $
+  interpretStoreDb query_UUID table_AccountAuth $
   interpretQueryAuthForAccountDb do
     restop @DbError @(QStore _ _ _) $ restop @DbError @(Query _ _) do
       Store.insert (Uid (u 1) (AccountAuth (u 5) "account 1" "password 1" Nothing))
@@ -33,4 +32,3 @@ test_authForAccount =
     auth2 = Uid (u 2) (AccountAuth (u 6) "account 2" "password 2" Nothing)
     auth3 = Uid (u 3) (AccountAuth (u 6) "account 2" "password 3" Nothing)
     u = Uid.intUUID
-    ts = Dd.accountAuthSchema

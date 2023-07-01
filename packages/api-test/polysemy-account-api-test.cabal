@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.35.0.
+-- This file has been generated from package.yaml by hpack version 0.35.2.
 --
 -- see: https://github.com/sol/hpack
 
@@ -70,7 +70,7 @@ library
       ViewPatterns
       OverloadedRecordDot
       NoFieldSelectors
-  ghc-options: -Wall -Widentities -Wincomplete-uni-patterns -Wmissing-deriving-strategies -Wredundant-constraints -Wunused-type-patterns -Wunused-packages -fplugin=Polysemy.Plugin -Wno-partial-type-signatures
+  ghc-options: -fplugin=Polysemy.Plugin -Wno-partial-type-signatures -Wall -Widentities -Wincomplete-uni-patterns -Wmissing-deriving-strategies -Wredundant-constraints -Wunused-type-patterns -Wunused-packages
   build-depends:
       base ==4.*
     , case-insensitive
@@ -81,7 +81,7 @@ library
     , polysemy-account-api >=0.2.0.0 && <0.3
     , polysemy-db
     , polysemy-plugin
-    , prelate >=0.5.1 && <0.6
+    , prelate ==0.6.*
     , servant-auth-server
     , servant-server
     , sqel
@@ -138,7 +138,7 @@ test-suite polysemy-account-api-test-test
       ViewPatterns
       OverloadedRecordDot
       NoFieldSelectors
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall -Widentities -Wincomplete-uni-patterns -Wmissing-deriving-strategies -Wredundant-constraints -Wunused-type-patterns -Wunused-packages -fplugin=Polysemy.Plugin -Wno-partial-type-signatures
+  ghc-options: -fplugin=Polysemy.Plugin -Wno-partial-type-signatures -threaded -rtsopts -with-rtsopts=-N -Wall -Widentities -Wincomplete-uni-patterns -Wmissing-deriving-strategies -Wredundant-constraints -Wunused-type-patterns -Wunused-packages
   build-depends:
       aeson
     , base ==4.*
@@ -148,7 +148,7 @@ test-suite polysemy-account-api-test-test
     , polysemy-account-api
     , polysemy-account-api-test
     , polysemy-plugin
-    , prelate >=0.5.1 && <0.6
+    , prelate ==0.6.*
     , servant-auth-server
     , servant-server
     , sqel

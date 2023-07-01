@@ -3,10 +3,10 @@ module Polysemy.Account.Api.Db.Interpreter.AuthForAccount where
 
 import Data.UUID (UUID)
 import Polysemy.Db (DbError, Query)
-import Polysemy.Hasql (DbTable, interpretQueryDd)
-import Sqel (Uuid, prim, prod)
+import Polysemy.Hasql (DbTable, interpretQuery)
+import Sqel (Uuid)
 
-import Polysemy.Account.Api.Db.Dd (accountAuth)
+import Polysemy.Account.Api.Db.Dd (query_authForAccount, table_AccountAuth)
 import Polysemy.Account.Data.AccountAuth (AccountAuth)
 import Polysemy.Account.Data.AuthForAccount (AuthForAccount)
 
@@ -15,7 +15,4 @@ interpretQueryAuthForAccountDb ::
   Member (DbTable (Uuid (AccountAuth UUID)) !! DbError) r =>
   InterpreterFor (Query (AuthForAccount UUID) [Uuid (AccountAuth UUID)] !! DbError) r
 interpretQueryAuthForAccountDb =
-  interpretQueryDd table table query
-  where
-    table = accountAuth
-    query = prod prim
+  interpretQuery query_authForAccount table_AccountAuth

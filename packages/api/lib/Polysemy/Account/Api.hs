@@ -22,6 +22,8 @@ module Polysemy.Account.Api (
 
   interpretAccountsDb,
   interpretAccountsPDb,
+  interpretAccountsDb',
+  interpretAccountsPDb',
   interpretAccountStore,
   interpretAccountAuthStore,
   interpretAccountTable,
@@ -65,7 +67,12 @@ import Polysemy.Account.Api.Db.Interpreter.Store (
   interpretAccountTable,
   )
 import Polysemy.Account.Api.Effect.Jwt (GenJwk, Jwt, genJwk, key, makeToken, settings)
-import Polysemy.Account.Api.Interpreter.Accounts (interpretAccountsDb, interpretAccountsPDb)
+import Polysemy.Account.Api.Interpreter.Accounts (
+  interpretAccountsDb,
+  interpretAccountsDb',
+  interpretAccountsPDb,
+  interpretAccountsPDb',
+  )
 import Polysemy.Account.Api.Interpreter.Authorize (interpretAuthorizeP, interpretAuthorizeWith)
 import Polysemy.Account.Api.Interpreter.Jwt (
   interpretGenJwk,

@@ -1,8 +1,8 @@
 -- | Description: Test request functions.
 module Polysemy.Account.Api.Test.Request where
 
+import qualified Sqel
 import Sqel (Uid (Uid))
-import qualified Sqel.Data.Uid
 import Zeugma (TestError, resumeTest)
 
 import Polysemy.Account.Accounts (register)

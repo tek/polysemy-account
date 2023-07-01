@@ -3,15 +3,14 @@
 
   inputs = {
     hix.url = "git+https://git.tryp.io/tek/hix";
-    hls.url = "github:haskell/haskell-language-server?ref=1.9.0.0";
     polysemy-hasql.url = "git+https://git.tryp.io/tek/polysemy-hasql";
   };
 
-  outputs = { hix, hls, polysemy-hasql, ...  }: hix.lib.pro ({ config, ... }: {
+  outputs = { hix, polysemy-hasql, ...  }: hix.lib.pro ({ config, ... }: {
     hackage.versionFile = "ops/version.nix";
     depsFull = [polysemy-hasql];
     main = "polysemy-account-api-test";
-    compiler = "ghc925";
+    compiler = "ghc94";
 
     overrides = { hackage, notest, ... }: {
       elocrypt = notest (hackage "2.1.0" "0dm2k528bs4zwriyrrqs7j44pmpwpxzivaa6n8iwliwd2sh19s78");
@@ -25,7 +24,7 @@
         enable = true;
         package = {
           name = "prelate";
-          version = "^>= 0.5.1";
+          version = "^>= 0.6";
         };
         module = "Prelate";
       };
@@ -67,7 +66,7 @@
         library = {
           enable = true;
           dependencies = [
-            "aeson ^>= 2.0"
+            "aeson >= 2.0 && < 2.2"
             "chronos ^>= 1.1"
             "exon ^>= 1.4"
             "fast-logger ^>= 3.1"
@@ -102,6 +101,7 @@
             "servant-auth"
             "servant-auth-server"
             "sqel"
+            "sqel-core"
             "tasty"
             "uuid"
           ];
@@ -163,7 +163,5 @@
         polysemy_account_test_port = config.envs.polysemy-account-integration.hostPorts.postgres;
       };
     };
-
-    envs.hls.hls.package = hls.packages.${config.system}.haskell-language-server-925;
   });
 }
