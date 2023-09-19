@@ -3,7 +3,7 @@ module Polysemy.Account.Api.Test.Request where
 
 import qualified Sqel
 import Sqel (Uid (Uid))
-import Zeugma (TestError, resumeTest)
+import Zeugma (TestError (TestError), resumeTest)
 
 import Polysemy.Account.Accounts (register)
 import Polysemy.Account.Api.Test.Data.Request (Headers, Method)
@@ -44,7 +44,7 @@ requestWithId ::
   Sem r Response
 requestWithId i method path headers body = do
   authed <- resumeTest do
-    auth <- note "No auths for this account" . head =<< Accounts.auths i
+    auth <- note (TestError "No auths for this account") . head =<< Accounts.auths i
     Accounts.authed auth.id
   requestWithAuth authed method path headers body
 

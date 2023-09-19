@@ -101,7 +101,7 @@ library
     , polysemy
     , polysemy-db
     , polysemy-plugin
-    , prelate ==0.6.*
+    , prelate >=0.6 && <0.8
     , random ==1.2.*
     , servant ==0.19.*
     , servant-auth ==0.4.*

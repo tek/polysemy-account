@@ -10,7 +10,6 @@ import Network.Wai (Request, requestHeaders, requestMethod)
 import qualified Network.Wai.Test as Wai
 import Network.Wai.Test (SRequest (SRequest), Session, defaultRequest, setPath, srequest)
 import Polysemy.Db (DbError)
-import Polysemy.Test (TestError (TestError))
 import Servant (
   Context (EmptyContext, (:.)),
   DefaultErrorFormatters,
@@ -22,7 +21,7 @@ import Servant (
   type (.++),
   )
 import Servant.Auth.Server (IsSecure (NotSecure), cookieIsSecure, defaultCookieSettings)
-import Zeugma (resumeTest)
+import Zeugma (TestError (TestError), resumeTest)
 
 import Polysemy.Account.Accounts (register)
 import qualified Polysemy.Account.Api.Effect.Jwt as Jwt
@@ -83,7 +82,7 @@ runSessionJwtCtx ::
   Session a ->
   Sem r a
 runSessionJwtCtx ctx srv session = do
-  jwtSettings <- Jwt.settings @(AuthedAccount i p) !>> throw "jwt"
+  jwtSettings <- Jwt.settings @(AuthedAccount i p) !>> throw (TestError "jwt")
   runSession @api @(AuthContext ++ ctx) srv (context jwtSettings) session
   where
     context jwtSettings =

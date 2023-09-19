@@ -74,14 +74,14 @@ library
   build-depends:
       base ==4.*
     , case-insensitive
-    , exon
+    , exon >=1.4 && <1.6
     , http-types
     , polysemy
     , polysemy-account >=0.2.0.0 && <0.3
     , polysemy-account-api >=0.2.0.0 && <0.3
     , polysemy-db
     , polysemy-plugin
-    , prelate ==0.6.*
+    , prelate >=0.6 && <0.8
     , servant-auth-server
     , servant-server
     , sqel
@@ -142,13 +142,13 @@ test-suite polysemy-account-api-test-test
   build-depends:
       aeson
     , base ==4.*
-    , exon
+    , exon >=1.4 && <1.6
     , polysemy
     , polysemy-account
     , polysemy-account-api
     , polysemy-account-api-test
     , polysemy-plugin
-    , prelate ==0.6.*
+    , prelate >=0.6 && <0.8
     , servant-auth-server
     , servant-server
     , sqel

@@ -87,16 +87,16 @@ library
       aeson >=2.0 && <2.2
     , base ==4.*
     , chronos ==1.1.*
-    , exon ==1.4.*
+    , exon >=1.4 && <1.6
     , fast-logger ==3.1.*
     , jose ==0.9.*
     , polysemy
     , polysemy-account >=0.2.0.0 && <0.3
-    , polysemy-conc ==0.12.*
+    , polysemy-conc >=0.12 && <0.14
     , polysemy-db
     , polysemy-hasql
     , polysemy-plugin
-    , prelate ==0.6.*
+    , prelate >=0.6 && <0.8
     , servant ==0.19.*
     , servant-auth ==0.4.*
     , servant-auth-server ==0.4.*
@@ -168,7 +168,7 @@ test-suite polysemy-account-api-test
     , polysemy-hasql-test
     , polysemy-plugin
     , polysemy-test
-    , prelate ==0.6.*
+    , prelate >=0.6 && <0.8
     , servant-auth
     , servant-auth-server
     , sqel

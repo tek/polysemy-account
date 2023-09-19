@@ -6,14 +6,17 @@
     polysemy-hasql.url = "git+https://git.tryp.io/tek/polysemy-hasql";
   };
 
-  outputs = { hix, polysemy-hasql, ...  }: hix.lib.pro ({ config, ... }: {
+  outputs = {hix, polysemy-hasql, ...}: hix.lib.pro ({config, lib, ...}: {
+    systems = ["x86_64-linux"];
+    ghcVersions = lib.mkForce ["ghc92" "ghc94"];
     hackage.versionFile = "ops/version.nix";
     depsFull = [polysemy-hasql];
     main = "polysemy-account-api-test";
     compiler = "ghc94";
+    gen-overrides.enable = true;
 
-    overrides = { hackage, notest, ... }: {
-      elocrypt = notest (hackage "2.1.0" "0dm2k528bs4zwriyrrqs7j44pmpwpxzivaa6n8iwliwd2sh19s78");
+    overrides = {notest, unbreak, ...}: {
+      elocrypt = notest unbreak;
     };
 
     cabal = {
@@ -24,7 +27,7 @@
         enable = true;
         package = {
           name = "prelate";
-          version = "^>= 0.6";
+          version = ">= 0.6 && < 0.8";
         };
         module = "Prelate";
       };
@@ -50,7 +53,7 @@
           dependencies = [
             "chronos ^>= 1.1"
             "elocrypt ^>= 2.1"
-            "password ^>=3.0"
+            "password ^>= 3.0"
             "polysemy-db"
             "random ^>= 1.2"
             "servant ^>= 0.19"
@@ -68,10 +71,10 @@
           dependencies = [
             "aeson >= 2.0 && < 2.2"
             "chronos ^>= 1.1"
-            "exon ^>= 1.4"
+            "exon >= 1.4 && < 1.6"
             "fast-logger ^>= 3.1"
             "jose ^>= 0.9"
-            "polysemy-conc ^>= 0.12"
+            "polysemy-conc >= 0.12 && < 0.14"
             "polysemy-db"
             "polysemy-hasql"
             "servant ^>= 0.19"
@@ -115,7 +118,7 @@
           enable = true;
           dependencies = [
             "case-insensitive"
-            "exon"
+            "exon >= 1.4 && < 1.6"
             "http-types"
             "polysemy-db"
             "servant-auth-server"
@@ -132,7 +135,7 @@
           enable = true;
           dependencies = [
             "aeson"
-            "exon"
+            "exon >= 1.4 && < 1.6"
             "polysemy-account"
             "polysemy-account-api"
             "servant-auth-server"
